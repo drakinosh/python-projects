@@ -1,0 +1,21 @@
+		
+		-----------------------
+		    WORLD SHIFTER 
+		-----------------------
+
+
+	A platformer game in which the player is out to retrieve an important
+piece of technology. He has been granted permission by the intergalactic cou-
+ncil to use gravito-thingy, which can change the direction of gravity.
+
+
+		------------------------
+		      DESIGN
+		-----------------------
+
+
+	- Different classes for different objects - playerC, enemyC, itemC,
+	  levlC, ...
+	- Scrolling handled by using a camera class(cameraC)
+	- control player by sending list of keys pressed
+	- 

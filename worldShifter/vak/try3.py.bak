@@ -1,0 +1,180 @@
+#!/usr/bin/env python
+
+import pygame, sys
+import spriteHandler
+import playerC, platformC, normC
+import enemyC, scrollerC
+from const import *
+import time
+import HUD
+import itemsC, cursorC
+
+
+ORIGIN = (level_w / 2, level_h/2)
+
+
+def terminate():
+    pygame.quit()
+    sys.exit()
+
+def add_platforms(platG):
+    w = platformC.RotPlatform.width
+    plat1 = platformC.RotPlatform((200, 300), dirtPath, ORIGIN)
+    plat2 = platformC.RotPlatform((275, 300), dirtPath,  ORIGIN)
+    plat2_1 = platformC.RotPlatform((350, 300), dirtPath, ORIGIN)
+    plat2_2 = platformC.RotPlatform((425, 300), dirtPath, ORIGIN)
+    
+    
+    plat3 = platformC.RotPlatform((640, 405), grassPath, ORIGIN) 
+    plat4 = platformC.RotPlatform((40, 405), grassPath, ORIGIN)
+    
+    liste = list()
+
+    for i in range(0, 32):
+        liste.append(normC.NormPlat((i * 50, 475)))
+
+
+    normG = pygame.sprite.Group(liste)
+
+ 
+    platG.add(plat1)
+    platG.add(plat2)
+    platG.add(plat2_1)
+    platG.add(plat2_2)
+    platG.add(plat3)
+    platG.add(plat4)
+
+    return platG, normG
+
+def add_enemy():
+    enem = enemyC.Slime((250, 200), RIGHT)
+    return enem
+
+def create_collectible_items(coll_itemG):
+   
+    for i in range(10):
+        coin = itemsC.Coin((100 + i*50, 75))
+        coll_itemG.add(coin)
+    
+    key1 = itemsC.Key((350, 225))
+    coll_itemG.add(key1)
+
+    return coll_itemG
+
+def add_slopes(slopeG):
+
+    return slopeG
+  
+
+def main():
+    pygame.init() 
+    pygame.mixer.init()
+    pygame.display.set_mode((SCREEN_W, SCREEN_H))
+    mainS = pygame.display.get_surface()
+    platformGroup = pygame.sprite.Group()
+    platformGroup, normGroup = add_platforms(platformGroup)
+    checkGroup = platformGroup.copy()
+    checkGroup.add(normGroup)
+    playa = playerC.Player((100, 200))
+    enem = add_enemy()
+    enemGroup = pygame.sprite.Group()
+    enemGroup.add(enem)
+
+    # Create collectible items
+    coll_itemG = pygame.sprite.Group()
+    coll_itemG = create_collectible_items(coll_itemG)
+    
+    slopeGroup = pygame.sprite.Group()
+    slopeGroup = add_slopes(slopeGroup)
+
+    clock = pygame.time.Clock()
+
+    nowTime = 0 # current time
+    timeSum = 0 # sum of time
+    sp_blitpos = None    
+    myCam = scrollerC.Camera(scrollerC.complex_camera, level_w, level_h)
+    
+    #HUD
+    myBar = HUD.HealthBar((10, 0))
+    myCoinHUD = HUD.itemHUD(coinHUDPath, GOLD,(10, myBar.h + 10))
+    myKeyHUD = HUD.itemHUD(keyHUDPath, GREEN, (myCoinHUD.rect.width+64, myBar.h + 10))
+    
+    myCursor = cursorC.Cursor()
+    pygame.mouse.set_visible(False) # hide the actual mouse
+
+    while True:
+        for event in pygame.event.get():
+	    if event.type == pygame.QUIT:
+	        terminate()
+	    elif event.type == pygame.KEYDOWN:
+	        if event.key == pygame.K_SPACE:
+		    playa.jump()
+		elif event.key == pygame.K_z:
+		    print "D VAR ", playa.canShoot, playa.direction
+	    
+	    elif event.type == pygame.MOUSEBUTTONDOWN:
+	        playa.shoot_fire()
+		myCursor.clicked = True
+
+        keys = pygame.key.get_pressed()
+        curPos = pygame.mouse.get_pos()
+        mainS.fill(BLUE)
+
+	# Main updates 
+	OUTLIST = playa.update(keys, myCam, mainS, checkGroup, slopeGroup)
+	myCam.update(playa)
+	#playa.canShift = False # remove player's ability to shift gravity
+
+	doRotate = OUTLIST[0]
+        nowTime = OUTLIST[1] # get current time
+	mainTime = time.time()
+	timeSum += mainTime - nowTime
+       
+	# toogle canShift on if sufficient time has passed
+        if (timeSum - (mainTime - nowTime) > 0.04):
+	    timeSum = 0              # reset counter
+	    playa.canShift = True
+        
+        platformGroup.update(mainS, doRotate)
+
+	enemGroup.update(checkGroup, playa.powerGroup, playa)
+
+	#check for dead enems
+	for enemy in enemGroup:
+	    if not enemy.alive:
+	        enemGroup.remove(enemy)
+	
+	coll_itemG.update(playa)
+	for item in coll_itemG:
+	    if item.consumed:
+	        coll_itemG.remove(item)
+
+
+	# apply camera
+	for each in checkGroup:
+	    mainS.blit(each.image, myCam.use_cam(each))
+	sp_blitpos = myCam.use_cam(playa)
+	mainS.blit(playa.image, myCam.use_cam(playa))
+	
+	for enemy in enemGroup:
+	    mainS.blit(enemy.image, myCam.use_cam(enemy))
+	
+	for item in coll_itemG:
+	    mainS.blit(item.image, myCam.use_cam(item))
+
+        for slope in slopeGroup:
+	    mainS.blit(slope.image, myCam.use_cam(slope))
+	
+
+        myCoinHUD.update("coins", playa, mainS)
+        myKeyHUD.update("keys", playa, mainS)
+	myBar.update(playa.health, mainS)
+        myCursor.final(mainS, curPos)
+	pygame.display.update()
+	clock.tick(60)
+
+main()
+        
+        
+        
+

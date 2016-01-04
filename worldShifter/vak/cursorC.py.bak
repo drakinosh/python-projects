@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import pygame
+from const import *
+
+class Cursor(pygame.sprite.Sprite):
+    
+    def __init__(self):
+       
+        pygame.sprite.Sprite.__init__(self)
+       
+        self.loop_ind = 0 # click-circle animation index
+	self.loop_dict = {0:5, 1:6, 2:10, 3:17, 4:21, 5:22}
+
+	self.image = pygame.image.load(cursorPath)
+        self.clicked = False # Capt. Obvious? It seems you've got the wrong peson. 
+	self.visible = True
+
+    def final(self, screen, pos):
+        
+	if self.visible:
+	    screen.blit(self.image, pos)
+	
+	if self.loop_ind > 5:
+	    self.loop_ind = 0
+	    self.clicked = False
+
+	if self.clicked:
+	    pygame.draw.circle(screen, GOLD, pos, \
+	      self.loop_dict[self.loop_ind], 2)
+	    self.loop_ind += 1
+	
+
+

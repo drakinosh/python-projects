@@ -1,0 +1,149 @@
+ 		GAME NOTES
+
+
+___
+Entry 1
+2015-10-02 FRI
+21:19 [GMT+5:45 | KATHMANDU]
+
+-Have added simple physics like walking(with animation)
+ and jumping
+
+-Need to add rotation about any desired origin
+
+-Intend to learn from mekire's pygame-rotation-master (DL'ed from github)
+
+-Laptop running out of juice
+
+___
+Entry 2
+2015-10-6 TUE
+09:19 [GMT+5:45 | KATHMANDU]
+
+-Rotation about intended point added
+-Toggling player's world-rotation ability added
+-Need to add mechanism to rotate only once in a single turn.
+  -change FPS? Probably not Viable
+-Need to add enemies and items
+
+___
+Entry 3
+2015-10-7 WED
+22:15 [GMT+5:34 | KATHMANDU]
+
+-Added smooth rotation about intended point so that the world rotates
+  - 90 degrees about a given origin smoothly. Success!!
+-Need to add enemies and items; will work on that now
+-Modify Platform from the platformC module so that it can be used as a 
+  -superclass for other classes
+ 
+___
+Entry 4
+2015-10-11 SUN
+02:24 [GMT+5:45 | KATHMANDU]
+
+-Added scrolling and a simple enemy
+-Need to modify rotation to suit scrolling
+-Need to improve scrolling 
+
+___
+Entry 5
+2015-10-11 SUN
+04:57 [GMT+5:45 | KATHMANDU]
+
+-Could not solve the problem of scrolling[see diary]
+-Need to take a break; will not commit sunken-ship fallacy;
+-Will work on this maybe after a few hours or a nap
+
+___
+Entry 6
+2015-10-11 SUN
+18:03 [GMT+5:45 | KATHMANDU]
+
+-Could not solve scrolling problem; used mekire's method
+-Will now completely understand mekire's scrolling and rotation, by tracing
+  -the steps
+-On a related note: I must achieve AI
+
+___
+Entry 7
+2015-10-13 TUE
+09:15 [GMT+5:45 | KATHMANDU]
+
+-Need to add 'freezing rotation'; need to figure out how to tint screen blue
+-Need to add locks, keys, and items
+-Need to add a level editor
+-Need to add slopes
+-Need to create a level editor
+-This is the hardest update yet
+
+___
+Entry 8
+2015-10-13 TUE
+18:25 [GMT+5:45 | KATHMANDU]
+
+-Sloping mechanism of self's creation added!
+-Need to improve sloping mechanism; will do tommorow
+
+___
+Entry 9
+2015-10-17 FRI
+01:04 [GMT+5:45 | KATHMANDU]
+
+-Temporarily removed sloping
+-Added cursor-controlled fireballs with bouncing effect
+-Need to add a level parser
+-Need to create a basic level editor
+-Going to Dhangadhi tommorow
+-PS: My madness starts from today; I will thus completely devote my life 
+     to the realisation of Artificial Intelligence
+
+___
+Entry 10
+2015-10-21 WED
+10:58 [GMT+5:45 | DHANGADHI]
+
+-Added level edtior with grid(see levelEditor subfolder)
+-Added basic parser; parser.py is shared between both worldShifter 
+ and levelEditor
+-Need to add locks to go with keys; need to add non-rotable blocks;
+ need to add a variety of items
+
+___
+Entry 11
+2015-10-22 THU
+19:32 [GMT+5:45 | DHANGADHI]
+
+-Worked all day on level editor(Dashain today);
+-Need to correct the angle of fireballs
+-Need to add ladders/ropes and mario-type portals
+
+___
+Entry 12
+2016-01-04 MON
+09:28 [GMT+5:45 | KATHMANDU]
+
+-After hours of grueling labour, I have succeded in making a half-decent UI
+-Just realised that I had, in the past, terminated some sentences in this note
+ with a semicolon;
+-Changed all folders to packages so importing from sibling and child
+ directories is possible, thus eliminating redundant modules
+
+To-do:
+-Need to add further features to editor such as deletion of items, inserting
+ identical items in a row easily e.g. holding shift to create a row of plat-
+ forms
+-Need to add enemies more intelligent than slimes with healthbars if their
+ own
+-Need to make the levers actually do something useful, like opening a gate
+-Need to add extra functionality
+-Need to re-read previous notes, as I seem to have forgotten what I had 
+ wanted to add in the past
+
+ PS: Am downloading 'Sakamichi no Apollon' and have played Portal
+ PPS: My madness actually starts from today. I will make AI a reality, or 
+      die trying. There is no turning back.
+ PPPS: I should really add a readme file.
+
+___
+

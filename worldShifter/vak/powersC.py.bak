@@ -1,0 +1,80 @@
+#!/usr/bin/env python
+
+import pygame
+from const import *
+import math
+
+
+class Fireball(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, st_angle, direc):
+        
+        
+	pygame.sprite.Sprite.__init__(self)
+        
+	self.pos = pos
+	self.direction = direc
+	self.y = pos[1]
+        
+        self.speed_mag = 8
+        self.st_angle = st_angle
+        
+        
+        
+        self.x_vel = 0
+	self.y_vel = 0
+
+	self.aniPos = 0
+	self.aniFact = 4
+	self.aniSpeed = 1
+        
+	self.health = 3
+
+	self.img1 = pygame.image.load(firePath)
+	self.img2 = pygame.transform.rotate(self.img1, 90)
+	self.img3 = pygame.transform.rotate(self.img2, 90)
+	self.img4 = pygame.transform.rotate(self.img3, 90)
+
+	self.imageList = [self.img1, self.img2, self.img3, self.img4]
+
+        self.image = self.imageList[0]
+	#self.rect = self.image.get_rect(topleft=pos)
+        self.rect = self.image.get_rect(center=pos)
+	self.used = False # i.e. collided with something
+        self.calc_vel()
+         
+        print math.degrees(self.st_angle)
+
+    def animate(self, imgList, aniPos, aniSpeed, aniFact):
+        
+	if aniPos % aniFact == 0:
+	    try:
+	        self.image = imgList[aniPos/aniFact]
+	    except IndexError:
+	        aniPos = -aniSpeed
+	
+	aniPos += aniSpeed
+	return aniPos
+    
+    def calc_vel(self):
+        
+	self.x_vel = self.speed_mag * math.cos(self.st_angle)
+	self.y_vel = self.speed_mag * math.sin(self.st_angle)
+
+    
+    def check_collided(self, obstacles):
+        
+	if pygame.sprite.spritecollideany(self, obstacles):
+	    self.health -= 1
+	    self.y_vel = -self.y_vel
+
+    def update(self, obstacles):
+        if self.health == 0:
+	    self.used = True
+        
+	self.aniPos = self.animate(self.imageList, self.aniPos, self.aniSpeed,\
+	                           self.aniFact)
+	self.check_collided(obstacles)
+	self.rect.move_ip((self.x_vel, self.y_vel))
+
+
