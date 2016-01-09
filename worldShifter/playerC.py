@@ -250,6 +250,7 @@ class Player(pygame.sprite.Sprite):
         """checks if self is in contact with an actionObj like a switch, button,
            lever, vechicle, or any such thing"""
 
+        self.action_contact = False # Reset the value to prevent mishaps
         obj = pygame.sprite.spritecollideany(self, actionObjGroup)
         
         if obj:

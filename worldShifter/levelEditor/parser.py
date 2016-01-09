@@ -6,7 +6,10 @@ This module writes and reads/parses level data in the format defined
 below:
 
 OBJECT-TYPE
-    COORDS
+    X-COORD Y-COORD SPECIAL_ATTRIB
+
+The data reside in a list called item_d
+
 
 '''
 
@@ -48,14 +51,33 @@ def write_level():
     dumpString = ""
 
     for itemType in itemDict.keys():
-        for coords in itemDict[itemType]:
-            dumpString += itemType + "\n"
-            dumpString += "    " + str(coords[0]) + " " + str(coords[1]) + "\n"
+        if itemType != "LEVELWIDTH":
+            for item_d in itemDict[itemType]:
+                dumpString += itemType + "\n"
+                dumpString += "    " + str(item_d[0]) + " " + str(item_d[1]) + \
+                              " " + str(item_d[2]) +"\n"
 
     dumpString += "SCREENSIZE\n"
     dumpString += "    " + str(SCREEN_W) + " " + str(SCREEN_H - PANEL_H) + "\n"
+    dumpString += "LEVELWIDTH\n"
+    dumpString += "    " + str(itemDict["LEVELWIDTH"]) + "\n"
+
     with open(levelFile, 'w') as lFile:
         lFile.write(dumpString)
+
+
+def read_level_file(levelFileName):
+    """
+    Read level files into the editor for editing saved files.
+    By default, level_dump.lvf is read.
+    """
+
+    with open(levelFileName, 'r') as lfile:
+        
+        object_data = lfile.read()
+        return sanitise(object_data)
+
+
 
 # TO BE USED ONLY BY THE MAIN PROGRAM
 def parse_level():

@@ -56,6 +56,8 @@ boardUpPath = os.path.join("images", "springBoardUp.png")
 switchLeftPath = os.path.join("images", "switchLeft.png")
 switchRightPath = os.path.join("images", "switchRight.png")
 
+doorClosedPath = os.path.join("images", "door_closedMid.png")
+doorOpenPath = os.path.join("images", "door_openMid.png")
 
 #Sound paths
 coinSoundPath = os.path.join("other_resources", "coin.ogg")

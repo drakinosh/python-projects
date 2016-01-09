@@ -17,12 +17,34 @@ ORIGIN = (SCREEN_W / 2, SCREEN_H/2)
 
 def handleQuit():
     menu.main()
+    quit()
 
 def terminate():
     pygame.quit()
     sys.exit()
 
+def toogleItemState(item, checkList):
+    """
+    Toogle the state of an item based on a list of
+      objects.
+    Currently, it is used only for doors and switches.
+    """
+    for each in checkList:
+        if each.action_id == item.action_id:
+            if each.used:
+                item.open = True
+            else:
+                item.open = False
+                            
+
 def add_platforms(platG, liste):
+    """
+    Create platforms by parsing the level data.
+    NOTE: This function, ironically, does not use the 
+        parser module.
+
+    """
+
     w = platformC.RotPlatform.width
     nl = list()
     ind = -1
@@ -63,10 +85,27 @@ def add_action_items(liste):
     for each in liste:
         ind += 1
         if each == 'SWITCH':
-            s = landscapeC.Switch((int(liste[ind+1]), int(liste[ind+2])))
+            s = landscapeC.Switch((int(liste[ind+1]), int(liste[ind+2])), \
+                                   int(liste[ind+3]))
             s_list.append(s)
     return s_list
 
+def add_other_items(liste):
+    """
+    Add other items like doors and so on.
+    """
+    m_list = list()
+    ind = -1
+    for each in liste:
+        ind += 1
+        if each == 'DOOR':
+            coords = int(liste[ind+1]), int(liste[ind+2]) 
+            action_id = int(liste[ind+3])
+            m = landscapeC.Door(coords, action_id)
+            m_list.append(m)
+
+
+    return m_list
 def create_collectible_items(coll_itemG, liste):
 
     ind = -1
@@ -129,6 +168,9 @@ def main():
     actionG = add_action_items(liste)
     actionG = pygame.sprite.Group(actionG)
 
+    otherG = add_other_items(liste)
+    otherG = pygame.sprite.Group(otherG)
+
     clock = pygame.time.Clock()
 
     nowTime = 0 # current time
@@ -143,6 +185,9 @@ def main():
 
     myCursor = cursorC.Cursor()
     pygame.mouse.set_visible(False) # hide the actual mouse
+    
+    #DUMMY DATA
+    OUTLIST = [0, 0]
 
     while True:
         for event in pygame.event.get():
@@ -196,12 +241,21 @@ def main():
                 coll_itemG.remove(item)
 
         actionG.update()
+        otherG.update()
+
+        switch_actlist = []
+        for item in actionG:
+            if item.type == "SWITCH":
+                switch_actlist.append(item)
+
+        for item in otherG:
+            if item.type == "DOOR":
+                toogleItemState(item, switch_actlist)
         
         # apply camera
         for each in checkGroup:
             mainS.blit(each.image, myCam.use_cam(each))
         sp_blitpos = myCam.use_cam(playa)
-        mainS.blit(playa.image, myCam.use_cam(playa))
 
         for enemy in enemGroup:
             mainS.blit(enemy.image, myCam.use_cam(enemy))
@@ -215,7 +269,10 @@ def main():
         for each in actionG:
             mainS.blit(each.image, myCam.use_cam(each))
 
-        
+        for each in otherG:
+            mainS.blit(each.image, myCam.use_cam(each))
+                 
+        mainS.blit(playa.image, myCam.use_cam(playa))
         myCoinHUD.update("coins", playa, mainS)
         myKeyHUD.update("keys", playa, mainS)
         myBar.update(playa.health, mainS)

@@ -25,6 +25,8 @@ class Item(pygame.sprite.Sprite):
         self.itemType = itemType
 
         self.selected = False # whether it is 'grabbed' by the cursor
+        self.special_attrib = None # special attributes
+
         self.rect = self.image.get_rect(topleft=pos)
 
     def grid_new_pos(self, coords, offset):

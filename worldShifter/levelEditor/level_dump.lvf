@@ -1,46 +1,48 @@
 STONE
-    280 130
-STONE
-    210 130
+    140 130 None
 COIN
-    420 130
+    280 200 None
 COIN
-    420 200
+    700 270 None
+DOOR
+    210 340 1
 SLIME
-    140 340
+    420 340 None
 SLIME
-    280 340
+    560 340 None
 PLAYER
-    280 -10
+    140 -10 None
 SWITCH
-    560 340
+    0 340 1
 GRASS
-    0 410
+    700 340 None
 GRASS
-    280 410
+    630 410 None
 GRASS
-    70 410
+    560 410 None
 GRASS
-    140 410
+    490 410 None
 GRASS
-    420 340
+    70 410 None
 GRASS
-    0 340
+    350 410 None
 GRASS
-    350 410
+    140 410 None
 GRASS
-    420 410
+    210 410 None
 GRASS
-    490 410
+    280 410 None
 GRASS
-    560 410
+    420 410 None
 GRASS
-    700 410
+    0 410 None
 GRASS
-    630 410
+    280 340 None
 GRASS
-    210 410
+    280 270 None
 GRASS
-    420 270
+    700 410 None
 SCREENSIZE
     500 500
+LEVELWIDTH
+    800

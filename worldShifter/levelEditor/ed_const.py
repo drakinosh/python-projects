@@ -55,9 +55,12 @@ tint_slimeIconPath = os.path.join(ACT_PATH, "slime_icon_tint.png")
 switchImgPath = os.path.join(ACT_PATH, "switch.png")
 switchIconPath = os.path.join(ACT_PATH, "switch_icon.png")
 tint_switchIconPath = os.path.join(ACT_PATH, "switch_icon_tint.png")
+doorImgPath = os.path.join(ACT_PATH, "door.png")
+doorIconPath = os.path.join(ACT_PATH, "door_icon.png")
+tint_doorIconPath = os.path.join(ACT_PATH, "door_icon_tint.png")
+
 arrowRightPath = os.path.join(ACT_PATH, "arr_right.png")
 arrowLeftPath = os.path.join(ACT_PATH, "arr_left.png")
-
 # item types
 GRASS = "GRASS"
 STONE = "STONE"
@@ -65,6 +68,9 @@ COIN = "COIN"
 SLIME = "SLIME"
 PLAYER = "PLAYER"
 SWITCH = "SWITCH"
+DOOR = "DOOR"
+
+itemTypeList = [GRASS, STONE, COIN, SLIME, PLAYER, SWITCH, DOOR]
 
 # Dictionary mapping item type to image path
 imgDict = {GRASS: grassBigImgPath, \
@@ -72,4 +78,6 @@ imgDict = {GRASS: grassBigImgPath, \
            COIN: coinImgPath, \
            SLIME: slimeImgPath, \
            PLAYER: playerImgPath, \
-           SWITCH: switchImgPath}
+           SWITCH: switchImgPath, \
+           DOOR: doorImgPath
+          }

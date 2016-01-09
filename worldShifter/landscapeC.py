@@ -37,12 +37,13 @@ class Rope(Base):
 
 class Switch(Base):
     
-    def __init__(self, pos):
+    def __init__(self, pos, action_id):
         
         Base.__init__(self, pos, switchLeftPath)
         
         self.used = False # the switch is unused
         self.type = "SWITCH"
+        self.action_id = action_id
 
     def update(self):
         
@@ -50,3 +51,29 @@ class Switch(Base):
             self.image = pygame.image.load(switchRightPath)
         else:
             self.image = pygame.image.load(switchLeftPath)
+
+
+class Door(Base):
+    
+    def __init__(self, pos, action_id):
+        """
+        Create a new Door object.
+            pos is the position.
+            aciton_id is a number common to a Door and its
+              corresponding switch.
+        """
+        
+        Base.__init__(self, pos, doorClosedPath)
+
+        self.open = False   # closed by default
+        self.type = "DOOR"
+        self.action_id = action_id
+
+    def update(self):
+        
+        if self.open:
+            self.image = pygame.image.load(doorOpenPath)
+        else:
+            self.image = pygame.image.load(doorClosedPath)
+
+        

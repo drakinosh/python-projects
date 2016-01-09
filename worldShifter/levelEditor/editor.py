@@ -10,9 +10,34 @@ import parser
 import scrollerC
 import dummy, arrow
 import menu
+import ed_GUI
+
+#Import vars
+# MODE - NEW OR EDIT
+# Change MODE to change mode of editing
+
+MODE = "NEW"
+
+def switchGenerator():  
+    """Return a unique ID for a switch object."""
+
+    num = 1
+    while True:
+        yield num
+        num += 1
+
+
+def doorGenerator():
+    """switchGenerator() for doors."""
+
+    num = 1
+    while True:
+        yield num
+        num += 1
 
 def handleQuit():
-    menu.main()
+    menu.main() #sys.exit() # This will kill the interpreter
+    quit()
 
 class Chief:
 
@@ -24,7 +49,7 @@ class Chief:
         self.itemGroup = pygame.sprite.Group()
         self.borderRectList = list()
         self.iconGroup = pygame.sprite.Group()
-        self.itemExistGroup = pygame.sprite.Group()
+        self.itemExistGroup = pygame.sprite.Group() # final group; written to the level file
 
         self.cam = scrollerC.Camera(scrollerC.complex_camera, \
                                    lev_width, SCREEN_H - PANEL_H)
@@ -39,6 +64,12 @@ class Chief:
         self.curPos = (0, 0)
 
         self.clock = pygame.time.Clock()
+        self.switch_gen = switchGenerator()
+        self.door_gen = doorGenerator()
+        # FLAGS
+        self.DOORFLAG = False   #a switch has been placed
+
+        
         self.create_panels()
         self.create_icons()
 
@@ -56,14 +87,61 @@ class Chief:
         if itemType == PLAYER:
             for item in self.itemGroup:
                 if item.itemType == PLAYER:
-                    print "PLAYER ALREADY EXISTS"
+                    print ("PLAYER ALREADY EXISTS")
                     return
+
+        # Only one door for one switch . If there is no switch ,
+        # doors cannot be created.
+
+        if not self.DOORFLAG and itemType == DOOR:
+            print("CANNOT PUT A DOOR BEFORE A SWITCH")
+            return
+
+        if self.DOORFLAG and itemType != DOOR:
+            print("NEXT ITEM MUST BE A DOOR")
+            return
+
+        if itemType == SWITCH:
+            self.DOORFLAG = True # a switch has been placed
+        if itemType == DOOR:
+            self.DOORFLAG = False
+
 
         image = imgDict[itemType]
         item = ci_C.Item(itemType, CREATE_POS, image, self.mainS)
+
+        # Add special attributes for certain items
+
+        if itemType == SWITCH:
+            item.special_attrib = self.switch_gen.next()
+        if itemType == DOOR:
+            item.special_attrib = self.door_gen.next()
+
         item.selected = isSelected
         self.itemGroup.add(item)
 
+    def delete_item(self, item):
+        """Delete an item."""
+
+        self.itemGroup.remove(item)
+
+        if item in self.itemExistGroup:
+            self.itemExistGroup.remove(item)
+
+        # If the item is a door or a switch, special
+        # procedures are required.
+
+        # First, the flags are reset and the generator
+        # of the complementary item is also incremented
+        
+        if item.itemType == DOOR:
+            self.DOORFLAG = True   
+            self.switch_gen.next() 
+
+        elif item.itemType == SWITCH:
+            self.DOORFLAG = False
+            self.door_gen.next()
+    
     def create_icons(self):
 
         grassIcon = icon.Icon(GRASS, grassIconPath, tint_grassIconPath, \
@@ -78,6 +156,8 @@ class Chief:
                                (SCREEN_W/2, 25) , self.mainS)
         switchIcon = icon.Icon(SWITCH, switchIconPath, tint_switchIconPath, \
                              (205, 75), self.mainS)
+        doorIcon = icon.Icon(DOOR, doorIconPath, tint_doorIconPath, \
+                             (275, 75), self.mainS)
 
         self.iconGroup.add(grassIcon)
         self.iconGroup.add(coinIcon)
@@ -85,11 +165,12 @@ class Chief:
         self.iconGroup.add(stoneIcon)
         self.iconGroup.add(playerIcon)
         self.iconGroup.add(switchIcon)
+        self.iconGroup.add(doorIcon)
 
     def draw_grid(self, offset):
         """
-        draw grids on the screen.
-        the items snap to the grids
+        Draw grids on the screen.
+        The items snap to the grids.
         """
 
         # draw vertical lines
@@ -109,8 +190,7 @@ class Chief:
         """
         for item in self.itemGroup:
             if not item.selected:
-                self.itemExistGroup.add(item)
-
+                self.itemExistGroup.add(item) 
     def check_mouse_state(self):
         "checks if the mouse is in a SAFE zone"
         self.mouse_state = SAFE
@@ -141,6 +221,13 @@ class Chief:
                     icon.selected = False
 
     def dump_data(self):
+        """Dumps item data on a specified file. This method
+        is responsible for creating level files. 
+        Currently, the following item data are dumped:
+            1. X-coordinate of item
+            2. Y-coordinate of item
+            3. Special attributes of item, if any.(None by default)
+        """
 
         itemDict = dict()
 
@@ -148,14 +235,25 @@ class Chief:
             itemDict[item.itemType] = list()
 
         for item in self.itemExistGroup:
-            itemDict[item.itemType].append((item.rect.x, item.rect.y - PANEL_H))
+            itemDict[item.itemType].append(
+              (item.rect.x, item.rect.y - PANEL_H, item.special_attrib))
 
+        itemDict["LEVELWIDTH"] = self.lev_width
         with open(itemDictFile, 'w') as myFile:
             p.dump(itemDict, myFile)
         parser.write_level()
 
     def mainloop(self):
-        offset = 0 # total offset for grid
+        """
+        The Mainloop for the editor.
+        (offset) is a tuple that stores the total x and y offsets
+            for the editor.
+        (clicked) is a variable that stores the state of the mouse
+        
+        The other varaibles are self-explanatory.
+        """
+
+        offset = [0, 0]  # total offset for grid
         right_off = 0 # right_arrow's offset
         left_off = 0 # left_arrow's offset
 
@@ -166,12 +264,30 @@ class Chief:
                     handleQuit()
 
                 elif event.type == pygame.MOUSEBUTTONDOWN:
-                    clicked = True
-                    for item in self.itemGroup:
-                        if item.selected and self.mouse_state == SAFE:
-                            item.selected = False
+                    if event.button == 1: # left button
+                        clicked = True
+                        for item in self.itemGroup:
+                            if item.selected and self.mouse_state == SAFE:
+                                item.selected = False
 
-                    self.check_icons()
+                        self.check_icons()
+                    
+                    elif event.button == 3: # right click
+                        
+                        # Deletes a temporary item
+                        for item in self.itemGroup:
+                            if item.selected and self.mouse_state == SAFE:
+                                self.delete_item(item)
+                       
+                        # Selects and deletes a 'written' item
+                        for perm_item in self.itemExistGroup:
+                            # We need to apply the camera to the cursor first
+                            newCurPos = (self.curPos[0]+offset[0], self.curPos[1])
+
+                            if perm_item.rect.collidepoint(newCurPos):
+                                self.delete_item(perm_item)
+
+                       
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_z:
@@ -186,11 +302,11 @@ class Chief:
             self.cam.update(self.straw_man)
             self.curPos = pygame.mouse.get_pos()
             self.mainS.fill(WHITE)
-            self.draw_grid(offset)
+            self.draw_grid(offset[0])
             self.maintain_list()
             self.check_mouse_state()
 
-            self.itemGroup.update(offset, self.mouse_state)
+            self.itemGroup.update(offset[0], self.mouse_state)
             for each in self.itemGroup:
                 self.mainS.blit(each.image, self.cam.use_cam(each))
 
@@ -199,22 +315,68 @@ class Chief:
 
             right_off = self.right_arrow.update(self.curPos, clicked)
             left_off = self.left_arrow.update(self.curPos, clicked)
-
+            
+            # Adjust horizontal offset
             if (right_off + left_off != 0):
-                offset +=  right_off + left_off
+                offset[0] +=  right_off + left_off
 
             self.iconGroup.update()
             pygame.display.update()
             self.clock.tick(FPS)
 
-def main():
+def editLevel():
+    data_list = parser.read_level_file(levelFile)
+
+    for token in data_list:
+        if token == "LEVELWIDTH":
+            lw = data_list[data_list.index("LEVELWIDTH")+1]
+
+
+    inst = Chief(int(lw))
+    
+    # Recreate an editable level from the given file
+
+    ind = -1
+    for itemType in data_list:
+        ind += 1
+        if itemType in itemTypeList:
+            # Need to account for panel when 
+            # extracting coordinates
+            pos = int(data_list[ind+1]), int(data_list[ind+2]) + PANEL_H
+            item = ci_C.Item(itemType, pos, imgDict[itemType],
+                             inst.mainS)
+
+            inst.itemGroup.add(item)
+            inst.itemExistGroup.add(item)
+    inst.mainloop()
+
+def newLevel():
     lw = raw_input("ENTER LEVEL WIDTH: ")
     lw = int(lw)
 
     assert lw >= SCREEN_W, "TOO SMALL"
-
     inst = Chief(lw)
     inst.mainloop()
+ 
+def main():
+    
+    ed_GUI.main()
+
+    dat = raw_input("Press N for a new level and E for editing an existing level\n")
+    
+    if dat.upper() == 'N':
+        MODE = "NEW"
+    elif dat.upper() == 'E':
+        MODE = "EDIT"
+    else:
+        print("INVALID INPUT")
+        sys.exit()
+
+    if MODE == "NEW":
+        newLevel()
+    else:
+        editLevel()
+
 
 if __name__ == '__main__':
     main()
