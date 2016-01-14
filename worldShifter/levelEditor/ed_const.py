@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
-import os
-
+import os 
 #FILEPATHS
 CURPATH = os.path.dirname(__file__)
 itemDictFile = os.path.join(CURPATH, "ITEM_DICT_FILE.pickle")
@@ -52,6 +50,10 @@ tint_playerIconPath = os.path.join(ACT_PATH, "player_icon_tint.png")
 slimeImgPath = os.path.join(ACT_PATH, "slime.png")
 slimeIconPath = os.path.join(ACT_PATH, "slime_icon.png")
 tint_slimeIconPath = os.path.join(ACT_PATH, "slime_icon_tint.png")
+flyImgPath = os.path.join(ACT_PATH, "fly.png")
+flyIconPath = os.path.join(ACT_PATH, "fly_icon.png")
+tint_flyIconPath = os.path.join(ACT_PATH, "fly_icon_tint.png")
+
 switchImgPath = os.path.join(ACT_PATH, "switch.png")
 switchIconPath = os.path.join(ACT_PATH, "switch_icon.png")
 tint_switchIconPath = os.path.join(ACT_PATH, "switch_icon_tint.png")
@@ -66,17 +68,24 @@ GRASS = "GRASS"
 STONE = "STONE"
 COIN = "COIN"
 SLIME = "SLIME"
+FLY = "FLY"
 PLAYER = "PLAYER"
 SWITCH = "SWITCH"
 DOOR = "DOOR"
 
-itemTypeList = [GRASS, STONE, COIN, SLIME, PLAYER, SWITCH, DOOR]
+itemTypeList = [GRASS, STONE, COIN, SLIME, FLY,
+                PLAYER, SWITCH, DOOR
+               ]
+
+actionItemList = [DOOR, SWITCH]
+
 
 # Dictionary mapping item type to image path
 imgDict = {GRASS: grassBigImgPath, \
            STONE: stoneBigImgPath, \
            COIN: coinImgPath, \
            SLIME: slimeImgPath, \
+           FLY: flyImgPath, \
            PLAYER: playerImgPath, \
            SWITCH: switchImgPath, \
            DOOR: doorImgPath

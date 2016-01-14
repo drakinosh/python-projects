@@ -76,4 +76,3 @@ class Door(Base):
         else:
             self.image = pygame.image.load(doorClosedPath)
 
-        

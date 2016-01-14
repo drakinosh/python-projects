@@ -5,7 +5,15 @@ from const import *
 
 class BaseEnemy(pygame.sprite.Sprite):
 
-    def __init__(self, pos, direc, vel):
+    def __init__(self, pos, direc, vel, gravBool):
+        """
+        Initialiser for BaseEnemy class.
+        
+        pos         -> Cartesian coordinates
+        direc       -> LEFT or RIGHT
+        vel         -> horizontal velocity
+        gravBool    -> True if enemy experiences gravity
+        """
 
         pygame.sprite.Sprite.__init__(self)
 
@@ -14,6 +22,7 @@ class BaseEnemy(pygame.sprite.Sprite):
 
         self.direction = direc
         self.speed = vel
+        self.gravBool = gravBool
         self.x_vel = (self.speed if self.direction == RIGHT else -self.speed)
         self.y_vel = 0
 
@@ -36,6 +45,7 @@ class BaseEnemy(pygame.sprite.Sprite):
 
     def ground_handler(self, obstacles):
 
+        
         for hurdle in obstacles:
             if self.check_height(hurdle):
                 if self.x_vel > 0 and self.rect.right == hurdle.rect.left:
@@ -48,6 +58,13 @@ class BaseEnemy(pygame.sprite.Sprite):
         return self.rect.colliderect(sprite.rect)
 
     def check_falling(self, obstacles):
+        
+        # For non-falling enemies, self.fall defaults to False
+
+        if self.gravBool == False:
+            self.fall = False
+            return 
+
         self.rect.move_ip((0, 1))
 
         if not pygame.sprite.spritecollideany(self, obstacles):
@@ -56,23 +73,33 @@ class BaseEnemy(pygame.sprite.Sprite):
             self.fall = False
 
         self.rect.move_ip((0, -1))
+        
+
+     
 
     def move(self):
         if not self.fall:
             self.rect.move_ip((self.x_vel, 0))
 
 
-class Slime(BaseEnemy):
+class SimpleEnemy(BaseEnemy):
+    """
+    A class of enemies whose movements are restricted to 
+      left-and-right motion and which have only two images
+      for each direction.
+    """
 
-    def __init__(self, pos, direc):
+    def __init__(self, pos, direc, speed, enemType, 
+                 leftImg1Path, leftImg2Path, gravBool):
 
-        BaseEnemy.__init__(self, pos, direc, 2)
+        BaseEnemy.__init__(self, pos, direc, speed, gravBool)
 
-        self.enemType = SQUISHY
+        self.enemType = enemType
+        self.gravBool = gravBool
         # load all necessary images
-        self.leftWalk1 = pygame.image.load(slime1Path).convert()
+        self.leftWalk1 = pygame.image.load(leftImg1Path).convert()
         self.rightWalk1 = pygame.transform.flip(self.leftWalk1, True, False).convert()
-        self.leftWalk2 = pygame.image.load(slime2Path).convert()
+        self.leftWalk2 = pygame.image.load(leftImg2Path).convert()
         self.rightWalk2 = pygame.transform.flip(self.leftWalk2, True, False).convert()
 
         self.leftImgList = [self.leftWalk1, self.leftWalk2]
@@ -137,3 +164,19 @@ class Slime(BaseEnemy):
 
         self.move()
         self.handle_all()
+
+
+class Slime(SimpleEnemy):
+    
+    def __init__(self, pos, direc):
+        
+        SimpleEnemy.__init__(self, pos, direc, 2, SQUISHY,
+                             slime1Path, slime2Path, True)
+
+
+class Fly(SimpleEnemy):
+    
+    def __init__(self, pos, direc):
+        
+        SimpleEnemy.__init__(self, pos, direc, 4, SQUISHY,
+                             fly1Path, fly2Path, False)

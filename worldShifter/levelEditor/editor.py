@@ -145,11 +145,14 @@ class Chief:
     def create_icons(self):
 
         grassIcon = icon.Icon(GRASS, grassIconPath, tint_grassIconPath, \
-                              (55, 25), self.mainS)
+                             (55, 25), self.mainS)
         coinIcon = icon.Icon(COIN ,coinIconPath, tint_coinIconPath, \
                              (100, 25), self.mainS)
         slimeIcon = icon.Icon(SLIME, slimeIconPath, tint_slimeIconPath, \
                              (140, 25), self.mainS)
+        flyIcon = icon.Icon(FLY, flyIconPath, tint_flyIconPath, \
+                             (180, 25), self.mainS)
+
         stoneIcon = icon.Icon(STONE, stoneIconPath, tint_stoneIconPath, \
                              (55, 75), self.mainS)
         playerIcon = icon.Icon(PLAYER, playerIconPath, tint_playerIconPath, \
@@ -162,6 +165,7 @@ class Chief:
         self.iconGroup.add(grassIcon)
         self.iconGroup.add(coinIcon)
         self.iconGroup.add(slimeIcon)
+        self.iconGroup.add(flyIcon)
         self.iconGroup.add(stoneIcon)
         self.iconGroup.add(playerIcon)
         self.iconGroup.add(switchIcon)
@@ -324,8 +328,8 @@ class Chief:
             pygame.display.update()
             self.clock.tick(FPS)
 
-def editLevel():
-    data_list = parser.read_level_file(levelFile)
+def editLevel(fileName):
+    data_list = parser.read_level_file(fileName)
 
     for token in data_list:
         if token == "LEVELWIDTH":
@@ -346,13 +350,15 @@ def editLevel():
             item = ci_C.Item(itemType, pos, imgDict[itemType],
                              inst.mainS)
 
+            # for action items, add action ids
+            if itemType in actionItemList:
+                item.special_attrib = int(data_list[ind+3])
+
             inst.itemGroup.add(item)
             inst.itemExistGroup.add(item)
     inst.mainloop()
 
-def newLevel():
-    lw = raw_input("ENTER LEVEL WIDTH: ")
-    lw = int(lw)
+def newLevel(lw):
 
     assert lw >= SCREEN_W, "TOO SMALL"
     inst = Chief(lw)
@@ -361,21 +367,6 @@ def newLevel():
 def main():
     
     ed_GUI.main()
-
-    dat = raw_input("Press N for a new level and E for editing an existing level\n")
-    
-    if dat.upper() == 'N':
-        MODE = "NEW"
-    elif dat.upper() == 'E':
-        MODE = "EDIT"
-    else:
-        print("INVALID INPUT")
-        sys.exit()
-
-    if MODE == "NEW":
-        newLevel()
-    else:
-        editLevel()
 
 
 if __name__ == '__main__':

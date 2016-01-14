@@ -76,6 +76,10 @@ def add_enemy(liste):
             enem = enemyC.Slime((int(liste[ind+1]), int(liste[ind+2])), LEFT)
             e_list.append(enem)
 
+        elif each == 'FLY':
+            enem = enemyC.Fly((int(liste[ind+1]), int(liste[ind+2])), LEFT)
+            e_list.append(enem)
+
     return e_list
 
 def add_action_items(liste):

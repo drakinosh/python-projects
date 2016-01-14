@@ -9,8 +9,11 @@ HALF_H = int(SCREEN_H/2)
 level_w = 1600
 level_h = 500
 
-#enemyTypes
+# -- enemyTypes
+
+# SQUISHY: Can be 'squished' if player jumps on it
 SQUISHY = "squishy"
+
 SLOPE = "slope"
 # Colours
 
@@ -40,6 +43,8 @@ stonePath = os.path.join("images", "stone.png")
 
 slime1Path = os.path.join("images", "slimeWalk1.png")
 slime2Path = os.path.join("images", "slimeWalk2.png")
+fly1Path = os.path.join("images", "flyFly1.png")
+fly2Path = os.path.join("images", "flyFly2.png")
 
 coinPath = os.path.join("images", "coinGoldNew.png")
 coinHUDPath = os.path.join("images", "hud_coins.png")

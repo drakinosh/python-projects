@@ -1,29 +1,7 @@
+FLY
+    700 200 None
 STONE
     140 130 None
-COIN
-    280 200 None
-COIN
-    700 270 None
-DOOR
-    210 340 1
-SLIME
-    420 340 None
-SLIME
-    560 340 None
-PLAYER
-    140 -10 None
-SWITCH
-    0 340 1
-GRASS
-    700 340 None
-GRASS
-    630 410 None
-GRASS
-    560 410 None
-GRASS
-    490 410 None
-GRASS
-    70 410 None
 GRASS
     350 410 None
 GRASS
@@ -41,7 +19,31 @@ GRASS
 GRASS
     280 270 None
 GRASS
+    560 410 None
+GRASS
+    700 340 None
+GRASS
+    630 410 None
+GRASS
     700 410 None
+GRASS
+    490 410 None
+GRASS
+    70 410 None
+DOOR
+    210 340 1
+SLIME
+    420 340 None
+SLIME
+    560 340 None
+PLAYER
+    140 -10 None
+SWITCH
+    0 340 1
+COIN
+    280 200 None
+COIN
+    700 270 None
 SCREENSIZE
     500 500
 LEVELWIDTH
