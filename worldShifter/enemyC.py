@@ -30,16 +30,36 @@ class BaseEnemy(pygame.sprite.Sprite):
         self.image = None# ditto
 
         self.alive = True # is alive
+        self.haveDied = False   # just died
         self.fall = False # not falling
         self.anim = False # toggle animation
 
 
     def check_height(self, sprite):
         "Checks if a sprite is about the same depth down from the origin"
-        myVal = self.rect.topleft[1] + self.rect.height
-        oVal  = sprite.rect.topleft[1] + sprite.rect.height
+        
+        
+        #myVal = self.rect.topleft[1] + self.rect.height
+        #oVal  = sprite.rect.topleft[1] + sprite.rect.height
 
-        if abs(myVal - oVal) < TOLERANCE:
+        myVal = self.rect.midleft[1]
+        oVal = sprite.rect.midleft[1]
+
+        # Theory:
+        # The difference in y-coords between the midpoints should not 
+        # be greater than half the height of the larger rect.
+
+        if self.rect.height < sprite.rect.height:
+            biggerRect = sprite.rect
+        else:
+            biggerRect = self.rect
+
+        benchHeight = biggerRect.height / 2.0 
+
+        # Note: It is crucial to remember that, in game programming,
+        # the Y-axis is positive downwards.
+
+        if abs(myVal - oVal) < benchHeight:
             return True
         return False
 
@@ -128,14 +148,28 @@ class SimpleEnemy(BaseEnemy):
         aniPos += aniSpeed
         return aniPos
 
+    
+    def die(self):
+        
+        if not self.haveDied:
+            
+            if self.gravBool:
+                self.alive = False
+            else:
+                self.gravBool = True
+
+            self.haveDied = True    # never enter this branch again
+    
     def check_player(self, player):
 
 
         if self.check_height(player) and self.check_collision(player):
             player.health -= 0.5
+        
         # If the player falls on you, die
         if player.y_vel > 0 and self.check_collision(player):
-            self.alive = False
+            
+            self.die()
 
     def handle_all(self):
         if self.x_vel > 0:
@@ -160,6 +194,13 @@ class SimpleEnemy(BaseEnemy):
         self.check_falling(obstacles)
 
         if pygame.sprite.spritecollideany(self, hazards):
+            self.die()
+
+
+        # flies and the like should die only after hitting the 
+        # ground with a thump
+
+        if self.haveDied and not self.fall:
             self.alive = False
 
         self.move()

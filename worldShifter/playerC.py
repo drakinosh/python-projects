@@ -38,7 +38,7 @@ class Player(pygame.sprite.Sprite):
         
         # attributes
         self.speed = 3
-        self.x_vel =0
+        self.x_vel = 0
         self.y_vel = 0
         self.jump_power = 10
         self.health = MAX_PLAYER_HEALTH
@@ -51,7 +51,7 @@ class Player(pygame.sprite.Sprite):
 
         # animation indices
         self.walkPos = 0
-        self.walkFact = 8 # every eigth iteration , fetch next image
+        self.walkFact = 8 # every eigth iteration, fetch next image
         self.animSpeed = 2
 
         # special attributes
@@ -98,6 +98,10 @@ class Player(pygame.sprite.Sprite):
 
         self.powerGroup = pygame.sprite.Group()
         self.action_obj = None  # stores currently-touching action obj
+
+
+        # IGNORABLE VARS
+        self.intMousePos = (0, 0)
 
     def check_keys(self, keys):
 
@@ -154,20 +158,25 @@ class Player(pygame.sprite.Sprite):
 
 
     def get_shoot_angle(self, curPos):
-        " limited angle to shoot "
+        " Return direction in which to shoot fireballs."
+        
+        """
         if self.direction == RIGHT:
             x1, y1 = self.rect.midright
         else:
             x1, y1 = self.rect.midleft
+        """
 
+        x1, y1 = self.rect.center
         x2, y2 = curPos
 
         x_mag, y_mag = x1-x2, y1-y2
 
         if x_mag != 0:
-            angle = math.atan2(-y_mag, x_mag)
+            angle = math.atan2(y_mag, x_mag)
         else:
             angle = 0
+
 
         return angle
 
@@ -181,11 +190,24 @@ class Player(pygame.sprite.Sprite):
             return True
         return False
 
-    def shoot_fire(self):
+    def shoot_fire(self, camera):
+        """
+        Spew awesome fireballs in the direction of the mouse.
+        This function utilises the game's camera, which is passed
+          to it, to compute the position of the cursor relative to
+          the player.
+        """
+
         cursor_pos = pygame.mouse.get_pos()
-        ang = self.get_shoot_angle(cursor_pos)
+        tempMouseRect = pygame.Rect(cursor_pos, (0, 0))
+        tempMouseRect = camera.use_cam_rect(tempMouseRect)
+
+        relPos = tempMouseRect.topleft
+
+        self.intMousePos = relPos
+        ang = self.get_shoot_angle(relPos)
         #ang = math.radians(170 - math.degrees(ang))
-        ang = math.radians((174 - math.degrees(ang)) % 360)
+        ang = math.radians(( (math.degrees(ang)+ 180 )))
         #ang = int(ang)
 
         if self.canShoot and self.ammo: #and self.is_good_angle(ang):
@@ -194,11 +216,8 @@ class Player(pygame.sprite.Sprite):
             self.timer_fire = time.time()
 
             # decide starting position of fireball
-            if self.direction == LEFT:
-                xPos = self.rect.midleft[0]
 
-            else:
-                xPos = self.rect.midright[0]
+            xPos = self.rect.centerx
 
             fire = powersC.Fireball((xPos, self.rect.centery), ang, self.direction)
             self.powerGroup.add(fire)

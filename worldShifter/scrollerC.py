@@ -11,6 +11,9 @@ class Camera:
     def use_cam(self, target):
         return target.rect.move(self.state.topleft)
 
+    def use_cam_rect(self, tarRect):
+        return tarRect.move(-self.state.topleft[0], -self.state.topleft[1])
+
     def update(self, target):
         self.state = self.camera_func(self.state, target.rect)
 
@@ -20,7 +23,7 @@ class Camera:
 def simple_camera(camera, target_rect):
     left, top, _, _ = target_rect
     _, _, width, height = camera
-    return pygame.Rect(-l+HALF_W, -t+HALF_H, width, height)
+    return pygame.Rect(-left+HALF_W, -top+HALF_H, width, height)
 
 def complex_camera(camera, target_rect):
     l, t, _, _  = target_rect

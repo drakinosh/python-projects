@@ -207,8 +207,14 @@ def main():
                     if playa.action_obj.type == 'SWITCH':
                         playa.action_obj.used = not playa.action_obj.used
 
+                # DEBUG INFO
+                elif event.key == pygame.K_w:
+                    
+                    print(" PL {}   MS {}".format(playa.rect.center,
+                                                  playa.intMousePos))
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                playa.shoot_fire()
+                playa.shoot_fire(myCam)
                 myCursor.clicked = True
 
         keys = pygame.key.get_pressed()
