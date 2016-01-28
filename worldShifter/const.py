@@ -38,6 +38,11 @@ jumpPath = os.path.join("images", "p1_jump.png")
 playWalkPath = os.path.join("images", "p1_walk.png")
 dirtPath = os.path.join("images", "dirt.png")
 grassPath = os.path.join("images", "grass.png")
+grassLeftPath = os.path.join("images", "grassLeft.png")
+grassMidPath = os.path.join("images", "grassMid.png")
+grassRightPath = os.path.join("images", "grassRight.png")
+grassCenterPath = os.path.join("images", "grassCenter.png")
+
 grassSlopePath = os.path.join("images", "grassHillRight.png")
 stonePath = os.path.join("images", "stone.png")
 

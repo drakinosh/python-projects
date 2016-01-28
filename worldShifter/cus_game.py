@@ -15,6 +15,11 @@ import menu
 ORIGIN = (SCREEN_W / 2, SCREEN_H/2)
 
 
+def getCoords(liste, ind):
+    
+    return int(liste[ind+1]), int(liste[ind+2])
+
+
 def handleQuit():
     menu.main()
     quit()
@@ -51,8 +56,25 @@ def add_platforms(platG, liste):
     for each in liste:
         ind += 1
         if each == 'GRASS':
-            coords = int(liste[ind+1]), int(liste[ind+2])
+            coords = getCoords(liste, ind)
             platG.add(platformC.Platform(coords, grassPath))
+
+        elif each == "GRASSLEFT":
+            coords = getCoords(liste, ind)
+            platG.add(platformC.Platform(coords, grassLeftPath))
+        
+        elif each == "GRASSMID":
+            coords = getCoords(liste, ind)
+            platG.add(platformC.Platform(coords, grassMidPath))
+
+        elif each == "GRASSRIGHT":
+            coords = getCoords(liste, ind)
+            platG.add(platformC.Platform(coords, grassRightPath))
+
+        elif each == "GRASSCENTER":
+            coords = getCoords(liste, ind)
+            platG.add(platformC.Platform(coords, grassCenterPath))
+
         elif each == 'STONE':
             coords = int(liste[ind+1]), int(liste[ind+2])
             platG.add(platformC.RotPlatform(coords, stonePath, ORIGIN))

@@ -35,9 +35,26 @@ GREY = (185, 185, 185)
 # for compatibility with imports
 ACT_PATH = os.path.join(os.path.dirname(__file__), "img")
 
+#--IMAGES--
+
+#--Platform tiles--
+
 grassBigImgPath = os.path.join(ACT_PATH, "grass.png")
 grassIconPath = os.path.join(ACT_PATH, "grass_icon.png")
 tint_grassIconPath = os.path.join(ACT_PATH, "grass_icon_tint.png")
+grassLeftImgPath = os.path.join(ACT_PATH, "grassLeft.png")
+grassLeftIconPath = os.path.join(ACT_PATH, "grassLeft_icon.png")
+tint_grassLeftIconPath = os.path.join(ACT_PATH, "grassLeft_icon_tint.png")
+grassMidImgPath = os.path.join(ACT_PATH, "grassMid.png")
+grassMidIconPath = os.path.join(ACT_PATH, "grassMid_icon.png")
+tint_grassMidIconPath = os.path.join(ACT_PATH, "grassMid_icon_tint.png")
+grassRightImgPath = os.path.join(ACT_PATH, "grassRight.png")
+grassRightIconPath = os.path.join(ACT_PATH, "grassRight_icon.png")
+tint_grassRightIconPath = os.path.join(ACT_PATH, "grassRight_icon_tint.png")
+grassCenterImgPath = os.path.join(ACT_PATH, "grassCenter.png")
+grassCenterIconPath = os.path.join(ACT_PATH, "grassCenter_icon.png")
+tint_grassCenterIconPath = os.path.join(ACT_PATH, "grassCenter_icon_tint.png")
+
 stoneBigImgPath = os.path.join(ACT_PATH, "stone.png")
 stoneIconPath = os.path.join(ACT_PATH, "stone_icon.png")
 tint_stoneIconPath = os.path.join(ACT_PATH, "stone_icon_tint.png")
@@ -65,6 +82,10 @@ arrowRightPath = os.path.join(ACT_PATH, "arr_right.png")
 arrowLeftPath = os.path.join(ACT_PATH, "arr_left.png")
 # item types
 GRASS = "GRASS"
+GRASSLEFT = "GRASSLEFT"
+GRASSMID = "GRASSMID"
+GRASSRIGHT = "GRASSRIGHT"
+GRASSCENTER = "GRASSCENTER"
 STONE = "STONE"
 COIN = "COIN"
 SLIME = "SLIME"
@@ -73,7 +94,8 @@ PLAYER = "PLAYER"
 SWITCH = "SWITCH"
 DOOR = "DOOR"
 
-itemTypeList = [GRASS, STONE, COIN, SLIME, FLY,
+itemTypeList = [GRASS, GRASSLEFT, GRASSMID, GRASSRIGHT,
+                GRASSCENTER, STONE, COIN, SLIME, FLY,
                 PLAYER, SWITCH, DOOR
                ]
 
@@ -82,6 +104,10 @@ actionItemList = [DOOR, SWITCH]
 
 # Dictionary mapping item type to image path
 imgDict = {GRASS: grassBigImgPath, \
+           GRASSLEFT: grassLeftImgPath, \
+           GRASSMID: grassMidImgPath, \
+           GRASSRIGHT: grassRightImgPath, \
+           GRASSCENTER: grassCenterImgPath, \
            STONE: stoneBigImgPath, \
            COIN: coinImgPath, \
            SLIME: slimeImgPath, \

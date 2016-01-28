@@ -146,23 +146,41 @@ class Chief:
 
         grassIcon = icon.Icon(GRASS, grassIconPath, tint_grassIconPath, \
                              (55, 25), self.mainS)
+        grassLeftIcon = icon.Icon(GRASSLEFT, grassLeftIconPath, \
+                                 tint_grassLeftIconPath, \
+                                 (100, 25), self.mainS)
+        grassMidIcon = icon.Icon(GRASSMID, grassMidIconPath, \
+                                 tint_grassMidIconPath, \
+                                 (140, 25), self.mainS)
+        grassRightIcon = icon.Icon(GRASSRIGHT, grassRightIconPath, \
+                                  tint_grassRightIconPath, \
+                                  (180, 25), self.mainS)
+        grassCenterIcon = icon.Icon(GRASSCENTER, grassCenterIconPath, \
+                                   tint_grassCenterIconPath, \
+                                   (180, 75), self.mainS)
+
         coinIcon = icon.Icon(COIN ,coinIconPath, tint_coinIconPath, \
-                             (100, 25), self.mainS)
+                            (240, 25), self.mainS)
         slimeIcon = icon.Icon(SLIME, slimeIconPath, tint_slimeIconPath, \
-                             (140, 25), self.mainS)
+                             (280, 25), self.mainS)
         flyIcon = icon.Icon(FLY, flyIconPath, tint_flyIconPath, \
-                             (180, 25), self.mainS)
+                             (320, 25), self.mainS)
 
         stoneIcon = icon.Icon(STONE, stoneIconPath, tint_stoneIconPath, \
                              (55, 75), self.mainS)
+        
         playerIcon = icon.Icon(PLAYER, playerIconPath, tint_playerIconPath, \
-                               (SCREEN_W/2, 25) , self.mainS)
+                             (360, 25) , self.mainS)
         switchIcon = icon.Icon(SWITCH, switchIconPath, tint_switchIconPath, \
-                             (205, 75), self.mainS)
+                             (215, 75), self.mainS)
         doorIcon = icon.Icon(DOOR, doorIconPath, tint_doorIconPath, \
                              (275, 75), self.mainS)
 
         self.iconGroup.add(grassIcon)
+        self.iconGroup.add(grassLeftIcon)
+        self.iconGroup.add(grassMidIcon)
+        self.iconGroup.add(grassRightIcon)
+        self.iconGroup.add(grassCenterIcon)
         self.iconGroup.add(coinIcon)
         self.iconGroup.add(slimeIcon)
         self.iconGroup.add(flyIcon)
