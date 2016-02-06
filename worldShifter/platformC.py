@@ -39,7 +39,7 @@ class RotPlatform(pygame.sprite.Sprite):
         # set black as transparent colorkey
         self.original_image.set_colorkey(BLACK)
         self.type = "BLOCK"
-	self.plat_type = "BLOCK"
+        self.plat_type = "BLOCK"
         self.image = self.original_image.copy()
         self.rect = self.image.get_rect(topleft=pos)
         self.angle = 0

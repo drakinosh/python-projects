@@ -102,6 +102,11 @@ def add_enemy(liste):
             enem = enemyC.Fly((int(liste[ind+1]), int(liste[ind+2])), LEFT)
             e_list.append(enem)
 
+        elif each == 'FROG':
+            coords = getCoords(liste, ind)
+            enem = enemyC.Frog(coords, LEFT)
+            e_list.append(enem)
+
     return e_list
 
 def add_action_items(liste):
@@ -224,7 +229,11 @@ def main():
                 if event.key == pygame.K_SPACE:
                     playa.jump()
                 elif event.key == pygame.K_z:
-                    print "D VAR ", playa.rect, enem.rect
+                    
+                    for enem in enemGroup:
+                        if isinstance(enem, enemyC.Frog):
+                            print("{} {}", enem.y_vel, enem.mutex)
+
                 elif event.key == pygame.K_x and playa.action_contact:
                     if playa.action_obj.type == 'SWITCH':
                         playa.action_obj.used = not playa.action_obj.used

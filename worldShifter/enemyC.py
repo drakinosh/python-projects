@@ -2,16 +2,19 @@
 
 import pygame
 from const import *
+from spriteHandler import SpriteSheet
+import time
 
 class BaseEnemy(pygame.sprite.Sprite):
 
-    def __init__(self, pos, direc, vel, gravBool):
+    def __init__(self, pos, direc, vel, yvel, gravBool):
         """
         Initialiser for BaseEnemy class.
         
         pos         -> Cartesian coordinates
         direc       -> LEFT or RIGHT
         vel         -> horizontal velocity
+        yvel        -> max vertical velocity
         gravBool    -> True if enemy experiences gravity
         """
 
@@ -22,6 +25,7 @@ class BaseEnemy(pygame.sprite.Sprite):
 
         self.direction = direc
         self.speed = vel
+        self.y_speed = yvel
         self.gravBool = gravBool
         self.x_vel = (self.speed if self.direction == RIGHT else -self.speed)
         self.y_vel = 0
@@ -70,8 +74,15 @@ class BaseEnemy(pygame.sprite.Sprite):
             if self.check_height(hurdle):
                 if self.x_vel > 0 and self.rect.right == hurdle.rect.left:
                     self.x_vel = -self.x_vel
+                    if self.gravBool:
+                        self.fall = True
+                        print("YEACH")
+
                 elif self.x_vel < 0 and self.rect.left == hurdle.rect.right:
                     self.x_vel = -self.x_vel
+                    if self.gravBool:
+                        self.fall = True
+                        print("YEACH")
 
     def check_collision(self, sprite):
         "checks if sprite's rect intersects self's rect"
@@ -83,7 +94,12 @@ class BaseEnemy(pygame.sprite.Sprite):
 
         if self.gravBool == False:
             self.fall = False
-            return 
+            return
+
+        if pygame.sprite.spritecollideany(self, obstacles):
+            
+            self.fall = False
+            return
 
         self.rect.move_ip((0, 1))
 
@@ -112,7 +128,7 @@ class SimpleEnemy(BaseEnemy):
     def __init__(self, pos, direc, speed, enemType, 
                  leftImg1Path, leftImg2Path, gravBool):
 
-        BaseEnemy.__init__(self, pos, direc, speed, gravBool)
+        BaseEnemy.__init__(self, pos, direc, speed, 0, gravBool)
 
         self.enemType = enemType
         self.gravBool = gravBool
@@ -192,8 +208,7 @@ class SimpleEnemy(BaseEnemy):
         self.check_player(player)
         self.ground_handler(obstacles)
         self.check_falling(obstacles)
-
-        if pygame.sprite.spritecollideany(self, hazards):
+        if pygame.sprite.spritecollideany(self, hazards): 
             self.die()
 
 
@@ -221,3 +236,140 @@ class Fly(SimpleEnemy):
         
         SimpleEnemy.__init__(self, pos, direc, 4, SQUISHY,
                              fly1Path, fly2Path, False)
+
+
+
+class Frog(BaseEnemy):
+    
+    def __init__(self, pos, direc):
+        
+        BaseEnemy.__init__(self, pos, direc, 3, 5, True)
+        
+        self.leaping = False
+        self.leap_start = False     # has started to leap
+        self.can_leap = True
+
+        self.leapLeftImg = pygame.image.load(frogLeapLeftPath).convert() 
+        self.leapRightImg = pygame.transform.flip(self.leapLeftImg, True, False)
+        self.squatLeftImg = pygame.image.load(frogSquatLeftPath).convert()
+        self.squatRightImg = pygame.transform.flip(self.squatLeftImg, True, False)
+
+        self.all_images = [self.squatLeftImg, self.squatRightImg,
+                           self.leapLeftImg, self.leapRightImg]
+
+        for image in self.all_images:
+            image.set_colorkey(BLACK)
+
+        if self.direction == LEFT:
+            self.image = self.squatLeftImg
+        else:
+            self.image = self.squatRightImg
+
+        self.rect = self.image.get_rect(topleft=pos)
+        self.time_limit = 1.5
+        self.t1 = None
+        self.t2 = None
+        self.mutex = False  # to lock times
+
+    def move(self):
+        
+        if self.leaping:
+            self.rect.move_ip((self.x_vel , 0))
+
+        self.rect.move_ip((0, self.y_vel))
+
+     
+    def handle_all(self):
+        
+        if self.x_vel > 0:
+            self.direction = RIGHT
+            self.image = self.squatRightImg
+
+            if self.leaping:
+                self.image = self.leapRightImg
+
+        elif self.x_vel < 0:
+            
+            self.direction = LEFT
+            self.image = self.squatLeftImg
+
+            if self.leaping:
+                self.image = self.leapLeftImg
+
+        # Limit the jumping of the frog
+        if self.t1:
+            self.t2 = time.time()
+            if (self.t2 - self.t1) >= self.time_limit:
+                self.can_leap = True
+                self.t1 = None
+                self.mutex = True
+        
+        else:
+            self.mutex = False
+
+    def update(self, obstacles, hazard, player):  
+
+
+        if self.fall:
+            self.y_vel += GRAVITY
+            self.can_leap = False
+
+        else:     # fell to the ground
+            self.leaping = False
+            self.y_vel = 0
+
+            if not self.t1 and not self.mutex:
+                self.t1 = time.time()
+                self.can_leap = False
+                self.mutex = False
+        '''
+        if self.leap_start:    
+            self.y_vel = -self.y_speed
+            self.leap_start = False
+            self.leaping = True
+        '''
+
+        # Make the frog leap everytime it can
+        if not self.leaping and self.can_leap:
+            self.leap_start = True
+            print("TOBIRU!")
+        
+        if self.leap_start:    
+            self.y_vel = -self.y_speed
+            self.leap_start = False
+            self.leaping = True
+
+        self.move()
+
+        self.ground_handler(obstacles)
+        self.check_falling(obstacles)
+        self.handle_all()
+
+
+#-- Advanced enemies ---
+
+class AdvancedEnemy(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, spriteSheetPath, imgCoordList):
+        """
+        Initialise an instance of AdvancedEnemy
+
+        pos             -> initial position of enemy
+        spriteSheetPath -> path to sprite sheet
+        imgCoordList    -> list containing coords of images in spritesheet
+            It shoud be of the form:
+                (x, y, width, height)
+        """
+
+
+        self.pos = pos
+
+        self.sheet = SpriteSheet(spriteSheetPath)
+
+        self.walk_r_list = list()
+        self.walk_l_list = list()
+
+
+
+
+

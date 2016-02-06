@@ -50,6 +50,8 @@ slime1Path = os.path.join("images", "slimeWalk1.png")
 slime2Path = os.path.join("images", "slimeWalk2.png")
 fly1Path = os.path.join("images", "flyFly1.png")
 fly2Path = os.path.join("images", "flyFly2.png")
+frogLeapLeftPath= os.path.join("images", "frog_leap.png")
+frogSquatLeftPath = os.path.join("images", "frog.png")
 
 coinPath = os.path.join("images", "coinGoldNew.png")
 coinHUDPath = os.path.join("images", "hud_coins.png")

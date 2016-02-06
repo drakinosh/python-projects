@@ -232,7 +232,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.move_ip((0, 1))
         if not pygame.sprite.spritecollideany(self, obstacles):
             if not self.climb:
-	        self.fall = True
+	            self.fall = True
 
         self.rect.move_ip((0, -1))
 
@@ -241,16 +241,24 @@ class Player(pygame.sprite.Sprite):
             self.check_falling(obstacles)
         else:
             self.fall = self.check_collisions((0, self.y_vel), 1, obstacles)
-
+        
         if self.x_vel:
             self.check_collisions((self.x_vel, 0), 0, obstacles)
 
+    # CAUTION:
     def check_collisions(self, offset, index, obstacles):
         """ checks if a collision would occur after moving offset pixels"""
         unaltered = True
         self.rect.move_ip(offset)
-        while pygame.sprite.spritecollideany(self, obstacles):
-            
+        while  pygame.sprite.spritecollideany(self, obstacles):
+
+            # First of all, check if it is a motile transparent block.
+            # if so, do nothin
+            col_spr = pygame.sprite.spritecollideany(self, obstacles)
+            if hasattr(col_spr, "inertia"):
+                if col_spr.inertia:
+                    break
+
             if self.climb:
 	            self.climb_mobility = False
             else:
@@ -258,6 +266,8 @@ class Player(pygame.sprite.Sprite):
 
             self.rect[index] += (1 if offset[index] < 0 else -1)
             unaltered = False
+            #print("DEBUG: PLAYERCOL, {}".format(index))
+
             # stop walking animation
             if index == 0:
                 self.walk = False
@@ -415,7 +425,7 @@ class Player(pygame.sprite.Sprite):
 
             mainS.blit(each.image, camera.use_cam(each))
 
-        # manga internal timers
+        # manage internal timers
         self.timer_allstop = time.time()
         if (self.timer_allstop - self.timer_fire) >= FIRE_TIME_LIMIT:
             self.canShoot = True

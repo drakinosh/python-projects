@@ -171,6 +171,10 @@ class Chief:
         
         playerIcon = icon.Icon(PLAYER, playerIconPath, tint_playerIconPath, \
                              (360, 25) , self.mainS)
+        
+        frogIcon = icon.Icon(FROG, frogIconPath, tint_frogIconPath, \
+                             (400, 25), self.mainS)
+
         switchIcon = icon.Icon(SWITCH, switchIconPath, tint_switchIconPath, \
                              (215, 75), self.mainS)
         doorIcon = icon.Icon(DOOR, doorIconPath, tint_doorIconPath, \
@@ -184,6 +188,7 @@ class Chief:
         self.iconGroup.add(coinIcon)
         self.iconGroup.add(slimeIcon)
         self.iconGroup.add(flyIcon)
+        self.iconGroup.add(frogIcon)
         self.iconGroup.add(stoneIcon)
         self.iconGroup.add(playerIcon)
         self.iconGroup.add(switchIcon)

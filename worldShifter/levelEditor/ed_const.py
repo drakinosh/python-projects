@@ -6,7 +6,7 @@ itemDictFile = os.path.join(CURPATH, "ITEM_DICT_FILE.pickle")
 levelFile = os.path.join(CURPATH, "level_dump.lvf")
 
 
-#DIMENSIONS
+#DIMENSIONS 
 SCREEN_H = 650
 SCREEN_W = 500
 GRID_H, GRID_W = 70, 70
@@ -71,6 +71,10 @@ flyImgPath = os.path.join(ACT_PATH, "fly.png")
 flyIconPath = os.path.join(ACT_PATH, "fly_icon.png")
 tint_flyIconPath = os.path.join(ACT_PATH, "fly_icon_tint.png")
 
+frogImgPath = os.path.join(ACT_PATH, "frog.png")
+frogIconPath = os.path.join(ACT_PATH, "frog_icon.png")
+tint_frogIconPath = os.path.join(ACT_PATH, "frog_icon_tint.png")
+
 switchImgPath = os.path.join(ACT_PATH, "switch.png")
 switchIconPath = os.path.join(ACT_PATH, "switch_icon.png")
 tint_switchIconPath = os.path.join(ACT_PATH, "switch_icon_tint.png")
@@ -90,12 +94,13 @@ STONE = "STONE"
 COIN = "COIN"
 SLIME = "SLIME"
 FLY = "FLY"
+FROG = "FROG"
 PLAYER = "PLAYER"
 SWITCH = "SWITCH"
 DOOR = "DOOR"
 
 itemTypeList = [GRASS, GRASSLEFT, GRASSMID, GRASSRIGHT,
-                GRASSCENTER, STONE, COIN, SLIME, FLY,
+                GRASSCENTER, STONE, COIN, SLIME, FLY, FROG,
                 PLAYER, SWITCH, DOOR
                ]
 
@@ -112,6 +117,7 @@ imgDict = {GRASS: grassBigImgPath, \
            COIN: coinImgPath, \
            SLIME: slimeImgPath, \
            FLY: flyImgPath, \
+           FROG: frogImgPath, \
            PLAYER: playerImgPath, \
            SWITCH: switchImgPath, \
            DOOR: doorImgPath
