@@ -243,7 +243,7 @@ class Frog(BaseEnemy):
     
     def __init__(self, pos, direc):
         
-        BaseEnemy.__init__(self, pos, direc, 3, 5, True)
+        BaseEnemy.__init__(self, pos, direc, 2, 5, True)
         
         self.leaping = False
         self.leap_start = False     # has started to leap
