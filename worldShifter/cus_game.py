@@ -89,6 +89,18 @@ def add_platforms(platG, liste):
 
     return platG, normG
 
+def add_extra(liste):
+
+    extraG = pygame.sprite.Group()
+    ind = -1
+
+    for each in liste:
+        ind += 1
+        if each == "WATER":
+            coords = getCoords(liste, ind)
+            extraG.add(platformC.WaterBlock(coords, False))
+    return extraG
+
 def add_enemy(liste):
     e_list = list()
     ind = -1
@@ -202,6 +214,8 @@ def main():
     otherG = add_other_items(liste)
     otherG = pygame.sprite.Group(otherG)
 
+    extraG = add_extra(liste)
+
     clock = pygame.time.Clock()
 
     nowTime = 0 # current time
@@ -253,7 +267,7 @@ def main():
         mainS.fill(BLUE)
 
         # Main updates
-        OUTLIST = playa.update(keys, myCam, mainS, checkGroup, actionG, slopeGroup)
+        OUTLIST = playa.update(keys, myCam, mainS, checkGroup, actionG, slopeGroup, extraG)
         myCam.update(playa)
         #playa.canShift = False # remove player's ability to shift gravity
 
@@ -269,7 +283,7 @@ def main():
 
         platformGroup.update(mainS, doRotate)
 
-        enemGroup.update(checkGroup, playa.powerGroup, playa)
+        enemGroup.update(checkGroup, playa.powerGroup, playa, mainS, myCam)
 
         #check for dead enems
         for enemy in enemGroup:
@@ -283,6 +297,7 @@ def main():
 
         actionG.update()
         otherG.update()
+        extraG.update()
 
         switch_actlist = []
         for item in actionG:
@@ -299,7 +314,8 @@ def main():
         sp_blitpos = myCam.use_cam(playa)
 
         for enemy in enemGroup:
-            mainS.blit(enemy.image, myCam.use_cam(enemy))
+            r1 = myCam.use_cam(enemy)
+            mainS.blit(enemy.image, r1)
 
         for item in coll_itemG:
             mainS.blit(item.image, myCam.use_cam(item))
@@ -312,7 +328,10 @@ def main():
 
         for each in otherG:
             mainS.blit(each.image, myCam.use_cam(each))
-                 
+
+        for each in extraG:
+            mainS.blit(each.image, myCam.use_cam(each))
+
         mainS.blit(playa.image, myCam.use_cam(playa))
         myCoinHUD.update("coins", playa, mainS)
         myKeyHUD.update("keys", playa, mainS)

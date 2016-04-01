@@ -78,6 +78,7 @@ class RotPlatform(pygame.sprite.Sprite):
 
         screen.blit(self.image, self.rect)
 
+    
     def update(self, screen, doRotate):
         if doRotate:
             self.shouldRotate = True
@@ -103,3 +104,45 @@ class Slope(pygame.sprite.Sprite):
         self.image = pygame.image.load(grassSlopePath)
         self.plat_type = SLOPE
         self.rect = self.image.get_rect(topleft=pos)
+
+class WaterBlock(pygame.sprite.Sprite):
+    
+    def __init__(self, pos, isTop):
+        """
+        WaterBlock object initialiser
+            pos   -> (tuple) -> position 
+            isTop -> (bool)  -> True if block is on top layer
+        """
+
+        pygame.sprite.Sprite.__init__(self)
+        self.pos = pos
+        self.isTop = isTop
+        self.disturbed = False # water is disturbed
+        self.type = "WATER"
+
+        self.image = pygame.image.load(waterPath)
+        self.ani_pos = 0
+        self.ani_fact = 5
+        self.ani_speed = 1
+        
+        self.img1 = pygame.image.load(waterTopPath)
+        self.img2 = pygame.image.load(waterTopMidPath)
+        self.img_list = [self.img1, self.img2]
+
+        self.rect = self.image.get_rect(topleft=pos)
+
+    def animate(self, imageList, animPos, animFact):
+        
+        if animPos % animFact == 0:
+            try:
+                self.image = imageList[animPos/animFact]
+            except IndexError:
+                self.animPos = -self.animSpeed
+
+        animPos += self.animSpeed
+        return animPos
+    def update(self):   
+        
+        if self.isTop:
+            self.ani_pos = self.animate(self.img_list, self.ani_pos, self.ani_fact)
+

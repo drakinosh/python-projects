@@ -2,7 +2,8 @@
 
 import pygame
 from const import *
-from spriteHandler import SpriteSheet
+from spriteHandler import SpriteSheet 
+from abstractC import LOS
 import time
 
 class BaseEnemy(pygame.sprite.Sprite):
@@ -76,13 +77,12 @@ class BaseEnemy(pygame.sprite.Sprite):
                     self.x_vel = -self.x_vel
                     if self.gravBool:
                         self.fall = True
-                        print("YEACH")
 
                 elif self.x_vel < 0 and self.rect.left == hurdle.rect.right:
                     self.x_vel = -self.x_vel
                     if self.gravBool:
                         self.fall = True
-                        print("YEACH")
+                        #print("YEACH")
 
     def check_collision(self, sprite):
         "checks if sprite's rect intersects self's rect"
@@ -116,6 +116,7 @@ class BaseEnemy(pygame.sprite.Sprite):
     def move(self):
         if not self.fall:
             self.rect.move_ip((self.x_vel, 0))
+
 
 
 class SimpleEnemy(BaseEnemy):
@@ -201,7 +202,7 @@ class SimpleEnemy(BaseEnemy):
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
-    def update(self, obstacles, hazards, player):
+    def update(self, obstacles, hazards, player, mainS, cam):
         if self.fall:
             self.y_vel += GRAVITY
             self.rect.move_ip((0, self.y_vel))
@@ -228,7 +229,7 @@ class Slime(SimpleEnemy):
         
         SimpleEnemy.__init__(self, pos, direc, 2, SQUISHY,
                              slime1Path, slime2Path, True)
-
+        self.enem_name = "SLIME"
 
 class Fly(SimpleEnemy):
     
@@ -236,19 +237,74 @@ class Fly(SimpleEnemy):
         
         SimpleEnemy.__init__(self, pos, direc, 4, SQUISHY,
                              fly1Path, fly2Path, False)
+        self.enem_name = "FLY"
+
+class SimpleAI:
+    
+    def __init__(self):
+        """SimpleAI class.
+        Need following attribs:
+            image, x_vel, rect, direction,...
+        Need following methods:
+            move
+        """
+        pass
+    
+    def check_player_sight(self, player, mainS, myCam):
+        """Check if player is in line of sight."""
+
+        p11 = myCam.use_cam_point(self.rect.topleft)[0]
+        p22 = myCam.use_cam_point(player.rect.topleft)[0]
+
+        pos_diff2 = p11 - p22
+        
+        self.los = LOS(self.rect.center, self.direction)
+        cond2 = self.los.check_LOS_collision(player, mainS, myCam)
+        
+        if pos_diff2 < 0 and self.direction == RIGHT and cond2:
+            return True
+
+        elif pos_diff2 > 0 and self.direction == LEFT and cond2:
+            return True
+
+        return False
+   
+    def check_player_distance(self, player):
+        """Check if player is near enough for AI to kick in."""
 
 
+        p1 = self.rect.x
+        p2 = player.rect.x
+        
+        pos_diff = p1 - p2
+        
+        if abs(pos_diff) < AI_THRESHOLD_DIFF:
+            return True 
+        return False
+    
 
-class Frog(BaseEnemy):
+    def check_ai_conditions(self, player, mainS, cam):
+        
+        # ORDER IS IMPORTANT DUE TO SHORT CIRCUITING
+        # ORDER IS NECESSARY FOR los OBJECT TO BE CREATED
+        if self.check_player_sight(player, mainS, cam) \
+           and self.check_player_distance(player):
+            
+            return True
+        
+        return False
+
+class Frog(BaseEnemy, SimpleAI):
     
     def __init__(self, pos, direc):
         
         BaseEnemy.__init__(self, pos, direc, 2, 5, True)
-        
+        SimpleAI.__init__(self)
         self.leaping = False
         self.leap_start = False     # has started to leap
         self.can_leap = True
 
+        self.enem_name = "FROG"
         self.leapLeftImg = pygame.image.load(frogLeapLeftPath).convert() 
         self.leapRightImg = pygame.transform.flip(self.leapLeftImg, True, False)
         self.squatLeftImg = pygame.image.load(frogSquatLeftPath).convert()
@@ -307,7 +363,7 @@ class Frog(BaseEnemy):
         else:
             self.mutex = False
 
-    def update(self, obstacles, hazard, player):  
+    def update(self, obstacles, hazard, player, mainS, cam):
 
 
         if self.fall:
@@ -332,7 +388,6 @@ class Frog(BaseEnemy):
         # Make the frog leap everytime it can
         if not self.leaping and self.can_leap:
             self.leap_start = True
-            print("TOBIRU!")
         
         if self.leap_start:    
             self.y_vel = -self.y_speed
@@ -343,6 +398,12 @@ class Frog(BaseEnemy):
 
         self.ground_handler(obstacles)
         self.check_falling(obstacles)
+
+      
+        if self.check_ai_conditions(player, mainS, cam):
+            #self.move()
+            pass
+
         self.handle_all()
 
 

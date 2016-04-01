@@ -2,6 +2,9 @@
 
 import os
 
+#DEBUG VARS
+GLOBAL_DEBUG = False
+
 SCREEN_W = 500
 SCREEN_H = 500
 HALF_W = int(SCREEN_W/2)
@@ -15,6 +18,9 @@ level_h = 500
 SQUISHY = "squishy"
 
 SLOPE = "slope"
+
+WATER_DOWN_SPEED = 0.12
+
 # Colours
 
 BLACK = (0, 0, 0)
@@ -30,7 +36,10 @@ RIGHT = "right"
 #others
 TOLERANCE = 10
 FIRE_TIME_LIMIT = 2 # seconds till player can fire again
+AI_THRESHOLD_DIFF = 150
 
+LOS_HEIGHT = 4
+LOS_WIDTH = AI_THRESHOLD_DIFF
 #paths
 cursorPath = os.path.join("images", "cursor_small.png")
 
@@ -45,6 +54,10 @@ grassCenterPath = os.path.join("images", "grassCenter.png")
 
 grassSlopePath = os.path.join("images", "grassHillRight.png")
 stonePath = os.path.join("images", "stone.png")
+
+waterPath = os.path.join("images", "liquidWater.png")
+waterTopPath = os.path.join("images", "liquidWaterTop.png")
+waterTopMidPath = os.path.join("images", "liquidWaterTop_mid.png")
 
 slime1Path = os.path.join("images", "slimeWalk1.png")
 slime2Path = os.path.join("images", "slimeWalk2.png")
@@ -76,8 +89,7 @@ coinSoundPath = os.path.join("other_resources", "coin.ogg")
 
 GRAVITY = 0.25
 MAX_PLAYER_HEALTH = 1000
-
-
+BUOYANCY = 0.5
 
 # Paths needed for frontend
 STARTBUT_PATH = os.path.join("images", "but_start.png")

@@ -1,1 +1,57 @@
-ditto
+LEVEL EDITOR CREATION NOTES
+N:SANSKAR CHAND
+
+___
+Entry 1
+2015-10-19 MON
+17:44 [GMT+5:45 | DHANGADHI]
+
+-Added draggable items
+-Added highlighting of icons
+-Need to allow only one item to be selected
+-Need to add a scroll bar or a left/rigt button to navigate the 
+ level
+-Need to add a level parser
+-Need to link a GUI with this level editor
+
+PS: Today, I resolved to be extraordinary.
+The world is about to be changed by me.
+___
+Entry 2
+2015-10-20 TUE
+15:48 [GMT+5:45 | DHANGADHI]
+
+-Added grid system
+-Added single-icon-highlighting
+-Added restriction of player item to one instance only
+-Need to create* a format to write and parse level data
+ [edit: *specify]
+___
+Entry 3
+2015-10-21 WED
+11:01 [GMT+5:45 | DHANGADHI]
+
+-Added level parse and level writer
+-Added restriction on the number of player items
+-Need to add buttons to scroll left/right
+-Need to add save/edit level facilities
+-Need to add undo and redo
+-Need to add ability to delete items
+___
+Entry 4
+2015-10-22 THU
+19:28 [GMT+5:45 | DHANGADHI]
+
+-NOTE: Tika day today(Dashain). Chaos!(and invade! Steins;Gate)
+-Added scroller
+-Added stone tile
+-Still need to add undo, save, edit, etc.
+
+PS: Memo to self - I WILL achieve Artificial Intelligence.
+    I will change the world.
+    I will go to a great US university.
+    I will become very much knowledgeable in varied fields
+     of Computer Science and Mathematics.
+    I will NOT settle for mediocrity.
+__
+_

@@ -158,6 +158,8 @@ class Chief:
         grassCenterIcon = icon.Icon(GRASSCENTER, grassCenterIconPath, \
                                    tint_grassCenterIconPath, \
                                    (180, 75), self.mainS)
+        waterIcon = icon.Icon(WATER, waterIconPath, tint_waterIconPath, \
+                                   (315, 75), self.mainS)
 
         coinIcon = icon.Icon(COIN ,coinIconPath, tint_coinIconPath, \
                             (240, 25), self.mainS)
@@ -185,6 +187,7 @@ class Chief:
         self.iconGroup.add(grassMidIcon)
         self.iconGroup.add(grassRightIcon)
         self.iconGroup.add(grassCenterIcon)
+        self.iconGroup.add(waterIcon)
         self.iconGroup.add(coinIcon)
         self.iconGroup.add(slimeIcon)
         self.iconGroup.add(flyIcon)

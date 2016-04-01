@@ -55,6 +55,11 @@ grassCenterImgPath = os.path.join(ACT_PATH, "grassCenter.png")
 grassCenterIconPath = os.path.join(ACT_PATH, "grassCenter_icon.png")
 tint_grassCenterIconPath = os.path.join(ACT_PATH, "grassCenter_icon_tint.png")
 
+waterImgPath = os.path.join(ACT_PATH, "liquidWater.png")
+waterIconPath = os.path.join(ACT_PATH, "liquidWater_icon.png")
+tint_waterIconPath = os.path.join(ACT_PATH, "liquidWater_icon_tint.png")
+
+
 stoneBigImgPath = os.path.join(ACT_PATH, "stone.png")
 stoneIconPath = os.path.join(ACT_PATH, "stone_icon.png")
 tint_stoneIconPath = os.path.join(ACT_PATH, "stone_icon_tint.png")
@@ -91,6 +96,7 @@ GRASSMID = "GRASSMID"
 GRASSRIGHT = "GRASSRIGHT"
 GRASSCENTER = "GRASSCENTER"
 STONE = "STONE"
+WATER = "WATER"
 COIN = "COIN"
 SLIME = "SLIME"
 FLY = "FLY"
@@ -100,7 +106,7 @@ SWITCH = "SWITCH"
 DOOR = "DOOR"
 
 itemTypeList = [GRASS, GRASSLEFT, GRASSMID, GRASSRIGHT,
-                GRASSCENTER, STONE, COIN, SLIME, FLY, FROG,
+                GRASSCENTER, STONE, WATER, COIN, SLIME, FLY, FROG,
                 PLAYER, SWITCH, DOOR
                ]
 
@@ -114,6 +120,7 @@ imgDict = {GRASS: grassBigImgPath, \
            GRASSRIGHT: grassRightImgPath, \
            GRASSCENTER: grassCenterImgPath, \
            STONE: stoneBigImgPath, \
+           WATER: waterImgPath, \
            COIN: coinImgPath, \
            SLIME: slimeImgPath, \
            FLY: flyImgPath, \

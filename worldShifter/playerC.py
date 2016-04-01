@@ -35,7 +35,8 @@ class Player(pygame.sprite.Sprite):
         self.climb = False # for ladders and such
         self.climb_mobility = True # moving up  and down
         self.action_contact = False # in contact with a switch or such
-        
+        self.water_contact = False # in contact with water
+
         # attributes
         self.speed = 3
         self.x_vel = 0
@@ -122,6 +123,10 @@ class Player(pygame.sprite.Sprite):
             self.x_vel -= self.speed
             if self.climb:
                 self.climb = False
+
+        elif keys[pygame.K_s]:
+            if self.water_contact:
+                self.y_vel += WATER_DOWN_SPEED
 
         # for climbing
         if self.climb and self.climb_mobility:
@@ -227,6 +232,9 @@ class Player(pygame.sprite.Sprite):
             self.y_vel = -self.jump_power
             self.fall = True
 
+        if self.water_contact:
+            self.y_vel = -self.jump_power/2
+    
     def check_falling(self, obstacles):
         """ if the player is not in contact with an obstacle, fall """
         self.rect.move_ip((0, 1))
@@ -392,8 +400,16 @@ class Player(pygame.sprite.Sprite):
 			self.image = (self.leftIdleImg if self.direction == LEFT else \
 							self.rightIdleImg)
 
+    def check_water(self, extraG):
+        
+        waterG = [each for each in extraG if each.type == "WATER"]
+        waterG = pygame.sprite.Group(waterG)
+
+        self.water_contact = pygame.sprite.spritecollideany(self, waterG)
+        
+
     # chief method
-    def update(self, keys, camera, mainS, obstacles, actionG, slopeG):
+    def update(self, keys, camera, mainS, obstacles, actionG, slopeG, extraG):
 
         # current time
         # for toggling the self.canShift
@@ -404,6 +420,7 @@ class Player(pygame.sprite.Sprite):
         self.handle_slopes(slopeG)
         self.get_position(obstacles)
         self.check_action_contact(actionG)
+        self.check_water(extraG)
         self.manage_states()
 
         #self.x += self.x_vel
@@ -414,6 +431,11 @@ class Player(pygame.sprite.Sprite):
         else:
             self.y_vel = 0
 
+        # MARKED
+        if self.water_contact:
+            UP_FORCE = self.y_vel * 0.12  +  BUOYANCY
+            self.y_vel -= UP_FORCE
+            
         self.x += self.x_vel
         #self.rect.y += self.y_vel
         #self.y += self.y_vel

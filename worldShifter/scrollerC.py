@@ -12,8 +12,15 @@ class Camera:
         return target.rect.move(self.state.topleft)
 
     def use_cam_rect(self, tarRect):
-        return tarRect.move(-self.state.topleft[0], -self.state.topleft[1])
+        #return tarRect.move((-self.state.topleft[0], -self.state.topleft[1])
+        return tarRect.move(self.state.topleft)
 
+    def use_cam_point(self, point):
+        
+        tempRect = pygame.Rect(point, (1, 1))
+        self.use_cam_rect(tempRect)
+        return tempRect.topleft
+    
     def update(self, target):
         self.state = self.camera_func(self.state, target.rect)
 
