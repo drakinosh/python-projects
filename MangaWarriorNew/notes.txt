@@ -1,0 +1,110 @@
+
+
+11 May 2015, 0007
+
+Currently listening to 'Samurai Heart(Some like it hot!)' while 
+trying create a dictionary in python mapping the manganames to the 
+links in mangareader.net.
+
+Will update after inevitable success.
+
+
+Update:
+11 May 2015, 0357
+
+Sucessfull in extracting main manga links.
+Have made a new file warrior2.py that is currently a duplicate of 
+warrior.py. Will be easy to fall back after unexpected failure.
+
+Will now utilise the pickle module of python's standard library to store and read the dictionary
+
+Update1:
+11 May 2015, 1514
+
+After wasting the whole day, have been able to access the main page of 
+any manga title.
+
+Remaining problems:
+    -> Downloading specified chapters and getting images
+    -> Enhancing the user interface
+    -> Much later, adding other websites
+    -> Making an executablr
+
+The next update will come soon.
+
+
+Update2:
+26 May 2015, 0334
+
+Yosh! Finally got an internet connection after a long time.
+
+MangaWarrior is partially a success.
+Now, users can choose the manga of their choice, and click on a chapter to 
+download all the images that are already labeled by mangareader.net
+
+However, there are still many problems left,  namely:
+    -The chapter selection listbox has to be converted to a 
+     tickalble-list-like object, like radio fields to allow for the 
+     downloading of multiple chapters.
+    -The title of the chapter also should be included in the chapter's 
+     folder.
+    -The user interface needs to be more refined.
+    -I really, REALLY need to clean my code up. I'm not very confident
+     about being able to understand warrior3.py after a few months.
+
+On the bright side, I've successfully downloaded and read 3 chapters 
+of Gintama using MangaWarrior(431-433, Ikumatsu's father arc), so all's well.
+
+0338
+
+4 June 2015, 00:02
+
+Only 11 days left for the exam, yet I am still unable to study. Oh well, I can manage in ten
+days if I stop using my computer. Probably.
+
+Now, the goals of this session are:
+    - Add the functionality to download multiple chapters at a time using
+      radio buttons and click-buttons
+    - If radio buttons prove to be unfeasible, I can always use the multiple-selection
+      property of ListBox
+
+00:04
+
+
+NEW UPDATE
+01:46, same day
+
+Progress so far:
+    - I'v succeeded in implementing checkboxes using a Text widget that allows multiple
+      selections, and a button is hooked up to download the selected chapters. The problem is,
+      ticking a chapter does not appear to change its corresponding value(I used a dictionary to
+      implement this).
+    - Once I've found a way around this, MangaWarrior will be better than ever.
+
+01:48
+
+ 
+SPECIAL UPDATE!!!!
+18:27, Same day
+
+Some special improvements are:
+    - The unchanging-value problem was fixed by using TopLevel, thereby eliminating
+      the need of two mainloops
+    - Oldtype and Newtype links are downloaded differently so there are no more 404 errors.
+    - NOTE:The new filename is warrior_new.py
+
+Some things to be fixed are:
+    - The sorting order of the chapters
+    - Need to include the chapters' titles
+    - Other miscellaneous things
+
+END 18:31
+
+PS: I'm not even going to touch this computer from now on until my board exams are over. After
+    all, I don't want to fail, do I?
+
+UODATE
+2015-09-26
+The new file is warrior_gamma.py
+
+
