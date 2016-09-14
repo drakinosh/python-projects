@@ -181,13 +181,6 @@ class Application(tk.Frame):
         self.sel_list = self.tree.selection()
 
 
-    def refershList(self):
-        """
-        Refreshes anime list by connecting to db.
-        Loads data to GUI and arrange in appropriate columns.
-        """
-
-
     def addAnime(self):
         
         if not self.mutex:
