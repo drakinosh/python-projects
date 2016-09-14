@@ -296,7 +296,6 @@ data_header = ["SN", "Anime name", "Genre", "Episodes", "Date added"]
 
 if __name__ == "__main__":
     data_list = globalReadDbase()
-    print(data_list)
 
     pro = Application()
     #pro.master.geometry('640x440+40+40')
