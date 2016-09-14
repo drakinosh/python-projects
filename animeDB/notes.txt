@@ -1,0 +1,39 @@
+Project Anime_DB
+Sanskar Chand 
+
+========================
+
+Entry 1
+2016-09-10 22:59 GMT+0545
+KATHMANDU, NEPAL
+
+-Added minimal GUI shell for backed program
+based on MySQLdb(_mysql).
+
+-Need to add features to insert Values using Text fields
+and add them to database.
+
+-Also, may need to scrap mysql entirely as users may not 
+have set it up. Would be easier to use a manual kind of storage
+using cPickle.
+
+________
+Entry 2
+2016-09-13 22:53 GMT+0545
+KATHMANDU, NEPAL
+
+-Changed to python3.
+-Scrapped  mysql and decided to use json[nonsensitive info].
+-Using Treeview from tkinter.ttk (need to understand more and modify it).
+-Need to add features to (currently) dummy functions.
+
+________
+Entry 3
+2016-09-14 17:16 GMT+0545
+KATHMANDU, NEPAL
+
+-Scrapped generator. Generating SNs manually
+-Added recalculation of SN's 
+-Version 1.0 is nearly finished
+
+________
