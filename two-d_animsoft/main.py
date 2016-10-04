@@ -12,8 +12,12 @@ def parent(parent_bone, child_bone):
     parent_bone.children_list.append(child_bone)
 
     # fix pivot points and handle points
+    if parent_bone.type == const.TYPE_CHIEF_BONE and parent_bone.SP_SEL:
+        utils.snapToParentTranslator(parent_bone, child_bone, 1, -1, True)
+        child_bone.wunderkind = True
 
-    utils.snapToParent(parent_bone, child_bone, 1, -1)
+    else:
+        utils.snapToParent(parent_bone, child_bone, 1, -1)
     """
     del_x = (child_bone.pos[0] - parent_bone.handle.pos[0])
     del_y = -(child_bone.pos[1] - parent_bone.handle.pos[1])
@@ -47,6 +51,9 @@ def main():
 
     univ_parent_no = 0      # number of bones selected for parenting
     parent_mode = False
+
+    select_mutex = False     # to allow only one bone to be
+                            # selected at a time (i.e. layering)
     while True:
         
         cur_pos = pg.mouse.get_pos()
@@ -65,7 +72,6 @@ def main():
                     print("MODO: {}".format(parent_mode))
 
                 if event.key == pg.K_a:
-                    print("Added a new bone")
                     new_bone = boneC.Bone(const.DEF_BONE_POS, None, mainS)
                     bone_list.append(new_bone)
 
@@ -73,18 +79,23 @@ def main():
                 
                 for each in bone_list:
                     if each.handle.rect.collidepoint(cur_pos):
-                        each.grabbed = True
+                        
+                        if not select_mutex:
+                            select_mutex = True
+                            each.grabbed = True
 
                     if each.type == const.TYPE_CHIEF_BONE:
                         
-                        if each.translator.rect.collidepoint(cur_pos):
+                        if not select_mutex and each.translator.rect.collidepoint(cur_pos):
                             each.trans_grabbed = True
+
+                            select_mutex = True
 
                     # for parenting
                     if parent_mode:
                         
                         if univ_parent_no == 0:
-                            
+
                             if each.pos_rect.collidepoint(cur_pos):
                                 
                                 univ_parent_no = 1
@@ -92,8 +103,15 @@ def main():
 
                         elif univ_parent_no == 1:
                             
-                            if each.handle.rect.collidepoint(cur_pos):
+
+                            if each.type == const.TYPE_CHIEF_BONE:
                                 
+                                if each.translator.rect.collidepoint(cur_pos):
+                                    each.SP_SEL = True
+                                    univ_parent_no = 2
+                                    each.parenting_code = univ_parent_no
+
+                            if each.handle.rect.collidepoint(cur_pos):
                                 univ_parent_no = 2
                                 each.parenting_code = univ_parent_no
 
@@ -102,9 +120,11 @@ def main():
                 for each in bone_list:
                     if each.grabbed:
                         each.grabbed = False
+                        select_mutex = False
 
                     if each.type == const.TYPE_CHIEF_BONE and each.trans_grabbed:
                         each.trans_grabbed = False
+                        select_mutex = False
 
 
         mainS.fill(const.COL_BLUE)
@@ -126,7 +146,16 @@ def main():
         for bone in bone_list:
             bone.handle.draw()
 
-        
+        # Draw the translator on top of everything else
+        for bone in bone_list:
+            if bone.type == const.TYPE_CHIEF_BONE:
+                bone.translator.draw()
+
+        # reset all parenting codes if parent_mode is toggle False
+        if not parent_mode:
+            for bone in bone_list:
+                bone.parenting_code = 0
+
         if parent_mode and univ_parent_no == 2:
             
             for bone in bone_list:
@@ -141,12 +170,11 @@ def main():
 
             #if the child bone already has a parent, cancel
             
-            if not child_b.parent:
-                
+            if not child_b.parent: 
                 parent(parent_b, child_b)
 
-                univ_parent_no = 0
-                parent_mode = False
+            univ_parent_no = 0
+            parent_mode = False
 
 
                 

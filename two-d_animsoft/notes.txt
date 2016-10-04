@@ -43,4 +43,19 @@ Entry 3
 -Will add other things too
 
 ________
+Entry 4
+2016-10-04 TUE
+20:17 GMT+0545
+
+-Succeded in adding "wunderkind" bones that can be connected to 
+ the translator of a chief bone
+-Added a mutext(select_mutex) that prevents the grabbing of more than one
+ point(handler or translator) at a time.
+
+-First and foremost, need to add way to create actual images out of the poses
+ made by the bones
+-After that, need to add windows to display frames
+-Need to add method to play animation
+
+________
 

@@ -19,6 +19,7 @@ class Bone:
 
         self.parenting_code = 0   # parenting code for joining bones
 
+        self.wunderkind = False  # True if attached to translator
         # step2: define all necessary paramters
 
         self.size = const.DEF_BONE_SIZE
@@ -89,6 +90,10 @@ class Bone:
         
         if self.children_list:
             for child in self.children_list:
+                
+                # do not rotate a special child
+                if child.wunderkind:
+                    continue        
 
                 # assign new position
                 child.pos = self.handle.pos
@@ -105,7 +110,11 @@ class Bone:
         if self.children_list:
             for child in self.children_list:
                 
-                utils.snapToParent(self, child, -1, -1)
+                if not child.wunderkind:
+                    utils.snapToParent(self, child, -1, -1)
+                else:
+                    utils.snapToParentTranslator(self, child, -1, -1)
+
 
                 # propagate to grandchildren, too
 
@@ -139,9 +148,6 @@ class Bone:
                                      self.bone_rad)
 
 
-        self.drawExtra()
-        
-
 
 class ChiefBone(Bone):
     
@@ -153,6 +159,7 @@ class ChiefBone(Bone):
         self.translator = miscC.Translator(self, self.pos, self.mainS)
 
         self.trans_grabbed = False  # grabbed for translation
+        self.SP_SEL = False         # Special select
 
     def translate(self, curPos):
     
