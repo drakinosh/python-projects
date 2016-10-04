@@ -1,0 +1,13 @@
+The working of the software is described herein.
+
+
+Classes:
+    
+    Bone:
+        
+        Each instance has pivot point position, handler position, and various mutex
+        variables. 
+
+        A bone is represented by two circles and a line
+
+

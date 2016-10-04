@@ -1,0 +1,46 @@
+PROJECT_NAME    : 2D ANIMSOFT
+CODE_NAME       : Pivotix
+OTHER_INFO      : Pivot clone(-ish) for Linux using python
+AUTHOR          : SANSKAR CHAND
+EMAIL           : sanskarchand@gmail.com
+
+START_DATE      : 2016-10-03 C.E. MON 19:41 GMT+0545
+
+################################
+
+Entry 1
+2016-10-03 MON
+19:41 GMT+0545
+
+-Wanted to make a pivot(peterbone) clone for linux using python;
+-Am not sure how to proceed - will wing it;
+-Here goes nothing
+
+________
+Entry 2
+2016-10-03 MON
+21:52 GMT+0545
+
+-Success!
+-Succeded in creating a bone class(and various others) and implementing
+ simple bone rotation.
+
+-Will add creation of central(i.e. translatable) bone
+-Will add methods for creationg of (parent, child) bone pairs
+
+________
+Entry 3
+2016-10-04 TUE
+10:31 GMT+0545
+
+-Once again, success!!
+-Succeded in adding central bone
+-Succeded in adding parenting to bones
+-Succeded in propagating rotation and translation to all child bones
+ and also their children
+
+-Will add method to add child bone to translator bone of chief bone
+-Will add other things too
+
+________
+
