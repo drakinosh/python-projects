@@ -58,4 +58,18 @@ Entry 4
 -Need to add method to play animation
 
 ________
+Entry 5
+2016-10-05 WED
+12:19 GMT+0545
+
+-Added Frame objects to store different animation frames
+-Removed children_list attributes as the references made copy.deepcopy cause
+ a segfault
+-The code is now slightly uglier due to various conditional statements resulting
+ from the removal of children_list; Each bone now looks to its parent bone
+ for cues to rotate or translate
+
+ -Need to add a way to convert .jpegs to .gifs
+
+ ________
 
