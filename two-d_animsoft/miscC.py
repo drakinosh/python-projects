@@ -3,7 +3,7 @@
 import pygame as pg
 import constants as const
 
-class PivotHandle:
+class PivotHandle(object):
     
     def __init__(self, bone, pos, mainS): 
         self.bone = bone
@@ -11,6 +11,13 @@ class PivotHandle:
         self.pos = pos
 
         self.getRect()
+
+    def __copy__(self):
+        
+        cls = self.__class__
+        result =  cls.__new__(cls)
+        result.__dict__.update(self.__dict__)
+        return result
 
     def getRect(self):
 
