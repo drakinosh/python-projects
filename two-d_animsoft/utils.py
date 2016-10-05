@@ -2,6 +2,42 @@
 
 import pygame as pg
 import math
+import copy
+
+def ultraCopy(bone_list):
+    
+    new_list = [copy.copy(bone) for bone in bone_list]
+
+    dicto = dict(zip(bone_list, new_list))
+
+    for each in dicto.keys():
+        
+        par = each.parent
+
+        if par:
+            dicto[each].parent = dicto[par]
+
+
+    return dicto.values()
+        
+def getNextFrame(current_frame, frame_list):
+    
+    index = frame_list.index(current_frame)
+
+    try:
+        return frame_list[index+1]
+    except:
+        return current_frame
+
+def getPrevFrame(current_frame, frame_list):
+    
+    #index = frame_list.index(current_frame)
+    index = current_frame.number - 1
+
+    try:
+        return frame_list[index-1]
+    except:
+        return current_frame
 
 def snapToParent(parent_bone, child_bone, signx, signy):
     
@@ -50,8 +86,10 @@ def getRectCoords(pos, size, circle_rad):
     top = pos[1] - circle_rad
 
     width, height = size
-
+    """
     print("GOTT: ")
     print(left, top, width, height)
+    """
+
     return (left, top, width, height)
 

@@ -14,12 +14,10 @@ class Bone(object):
         
         # step1: handle everything parent-child related
         self.parent = parent_bone
-        #selfchildren_list = list()
+        selfchildren_list = list()
 
-        '''
         if self.parent:
             self.parent.children_list.append(self)
-        '''
 
         self.parenting_code = 0   # parenting code for joining bones
 
@@ -142,7 +140,6 @@ class Bone(object):
 
         self.translating = True
 
-    '''
     def propagateRotation(self, del_ang):
         
         if self.children_list:
@@ -176,7 +173,6 @@ class Bone(object):
                 # propagate to grandchildren, too
 
                 child.propagateTranslation()
-    '''
 
     def updateHandle(self, coords):
 
