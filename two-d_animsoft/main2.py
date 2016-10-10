@@ -101,6 +101,13 @@ def main():
                     new_bone = boneC.Bone(const.DEF_BONE_POS, None, mainS)
                     cur_frame.bone_list.append(new_bone)
 
+                if event.key == pg.K_d:
+                    
+                    new_bone = boneC.CircleBone(const.DEF_BONE_POS, None,
+                                                const.DEF_CIRCLE_RAD, const.DEF_THICKN,
+                                                mainS)
+                    cur_frame.bone_list.append(new_bone)
+                                                    
                 if event.key == pg.K_f:
                     #frame_snap_mode = not frame_snap_mode
                     frame_snap_mode = True
@@ -171,7 +178,7 @@ def main():
                         select_mutex = False
 
 
-        mainS.fill(const.COL_BLUE)
+        mainS.fill(const.COL_WHITE)
 
         # Rotate the bones, if any are grabbed
         # Also, draw the bones
@@ -259,6 +266,9 @@ def main():
             
             for bone in cur_frame.bone_list:
                 bone.grabbed = False
+
+                if bone.type == const.TYPE_CHIEF_BONE:
+                    bone.trans_grabbed = False
             
             # add current frame to list
             frame_list.append(cur_frame)

@@ -72,4 +72,19 @@ Entry 5
  -Need to add a way to convert .jpegs to .gifs
 
  ________
+Entry 06
+2016-10-10 MON
+09:36 GMT+0545
+
+-Am in Dhangadhi now
+
+-Added CircleBone class
+-Changed bg colour to white
+
+-Need to take a look at accuracy during calculations; independent rotation of CircleBone objects
+ shows noticeable movement of the centre of the cicrcle - need to fix this, but it shouldn't be much
+ of a problem as CircleBone objects are not currently allowed to be a ChiefBone
+-Still need to add .jpeg to .gif conversion 
+
+________
 

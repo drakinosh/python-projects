@@ -53,6 +53,13 @@ def getDelta(pos1, pos2):
     
     return pos1[0] - pos2[0], pos1[1] - pos2[1]
 
+def getMidpoint(pos1, pos2):
+    
+    x = (pos1[0] + pos2[0]) / 2
+    y = (pos1[1] + pos2[1]) / 2
+
+    return (x, y)
+
 def snapToParentTranslator(parent_bone, child_bone, signx, signy, initial=False):
     
     # on initial snapping, some adjustments need to be made

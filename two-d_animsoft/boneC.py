@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 import pygame as pg
 import constants as const
 import utils
@@ -142,7 +141,6 @@ class Bone(object):
 
         self.translating = True
 
-    '''
     def propagateRotation(self, del_ang):
         
         if self.children_list:
@@ -176,7 +174,6 @@ class Bone(object):
                 # propagate to grandchildren, too
 
                 child.propagateTranslation()
-    '''
 
     def updateHandle(self, coords):
 
@@ -196,7 +193,7 @@ class Bone(object):
         self.circle1 = pg.draw.circle(self.mainS, const.COL_BLACK, self.pos,
                                       self.bone_rad)
         #self.rect = pg.draw.rect(self.mainS, const.COL_BLACK, self.rekkuto)
-
+ 
         pg.draw.line(self.mainS, const.COL_BLACK, self.pos, self.handle_pos,
                      self.bone_rad * 2)
 
@@ -205,7 +202,52 @@ class Bone(object):
                                      self.bone_rad)
 
 
+class CircleBone(Bone):
+    
+    def __init__(self, pos, parent, radius, thickness, mainS):
+        
+        """
+        __init__ method for a circle bone.
 
+        pos -> position of the pivot point
+        raidus, thickness -> Let me introduce Professor Obvious
+        """
+
+        # first, initialise parent class
+        Bone.__init__(self, pos, parent, mainS)
+
+
+        # then, define the variables necessary for or exclusive to this class
+        # some may need to be redefined
+
+        self.rad = radius
+        self.thickn = thickness
+
+        self.type = const.TYPE_CIRCLE_BONE
+        self.size = (2 * self.rad, 0)
+
+        self.handle_pos = self.pos[0], self.pos[1] - 2 * self.rad 
+
+        self.centre_pos = utils.getMidpoint(self.pos, self.handle_pos)
+
+    def updateHandle(self, coords):
+        
+        # modifications first
+        self.handle_pos = coords
+        self.handle.update(self.handle_pos)
+
+        self.pivot_point = self.pos
+
+        # now for the modifications
+        self.centre_pos = utils.getMidpoint(self.handle_pos, self.pos)
+        self.getPosRect()
+
+    def draw(self):
+        
+        pg.draw.circle(self.mainS, const.COL_BLACK, self.centre_pos,
+                       self.rad, self.thickn)
+
+        
 class ChiefBone(Bone):
     
     def __init__(self, pos, mainS):
