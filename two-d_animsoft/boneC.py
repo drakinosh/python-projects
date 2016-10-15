@@ -9,7 +9,7 @@ from copy import copy, deepcopy
 
 class Bone(object):
     
-    def __init__(self, pos, parent_bone, mainS):
+    def __init__(self, pos, parent_bone):
         
         # step1: handle everything parent-child related
         self.parent = parent_bone
@@ -41,14 +41,14 @@ class Bone(object):
         self.rect_coords = utils.getRectCoords(self.pos, self.size,
                                                 self.bone_rad)
 
-        self.mainS = mainS
+        #self.mainS = mainS
 
         self.handle_pos = (self.pos[0] + self.size[0], self.pos[1])
 
         # unpack returned tuple
         self.rekkuto = pg.Rect(*self.rect_coords)
         
-        self.handle = miscC.PivotHandle(self, self.handle_pos, mainS)
+        self.handle = miscC.PivotHandle(self, self.handle_pos)
         self.pivot_point = self.pos
 
         self.getPosRect()
@@ -188,23 +188,28 @@ class Bone(object):
         
         self.handle.draw()
 
-    def draw(self):
+    def draw(self, mainS, onion=False):
+        
+        if onion:
+            self.colour = const.COL_ONION
+        else:
+            self.colour = const.COL_BLACK
 
-        self.circle1 = pg.draw.circle(self.mainS, const.COL_BLACK, self.pos,
+        self.circle1 = pg.draw.circle(mainS, self.colour, self.pos,
                                       self.bone_rad)
         #self.rect = pg.draw.rect(self.mainS, const.COL_BLACK, self.rekkuto)
  
-        pg.draw.line(self.mainS, const.COL_BLACK, self.pos, self.handle_pos,
+        pg.draw.line(mainS, self.colour, self.pos, self.handle_pos,
                      self.bone_rad * 2)
 
-        self.circle2 = pg.draw.circle(self.mainS, const.COL_BLACK, 
+        self.circle2 = pg.draw.circle(mainS, self.colour, 
                                      self.handle_pos,
                                      self.bone_rad)
 
 
 class CircleBone(Bone):
     
-    def __init__(self, pos, parent, radius, thickness, mainS):
+    def __init__(self, pos, parent, radius, thickness):
         
         """
         __init__ method for a circle bone.
@@ -214,7 +219,7 @@ class CircleBone(Bone):
         """
 
         # first, initialise parent class
-        Bone.__init__(self, pos, parent, mainS)
+        Bone.__init__(self, pos, parent)
 
 
         # then, define the variables necessary for or exclusive to this class
@@ -242,20 +247,24 @@ class CircleBone(Bone):
         self.centre_pos = utils.getMidpoint(self.handle_pos, self.pos)
         self.getPosRect()
 
-    def draw(self):
+    def draw(self, mainS, onion=False):
         
-        pg.draw.circle(self.mainS, const.COL_BLACK, self.centre_pos,
+        self.colour = const.COL_BLACK
+        if onion:
+            self.colour = const.COL_ONION
+
+        pg.draw.circle(mainS, self.colour, self.centre_pos,
                        self.rad, self.thickn)
 
         
 class ChiefBone(Bone):
     
-    def __init__(self, pos, mainS):
+    def __init__(self, pos):
         
-        Bone.__init__(self, pos, None, mainS)
+        Bone.__init__(self, pos, None)
 
         self.type = const.TYPE_CHIEF_BONE
-        self.translator = miscC.Translator(self, self.pos, self.mainS)
+        self.translator = miscC.Translator(self, self.pos)
 
         self.trans_grabbed = False  # grabbed for translation
         self.SP_SEL = False         # Special select
@@ -278,8 +287,8 @@ class ChiefBone(Bone):
         #self.propagateTranslation()
 
 
-    def drawExtra(self):
+    def drawExtra(self, mainS):
         
-        self.translator.draw()
-        self.handle.draw()
+        self.translator.draw(mainS)
+        self.handle.draw(mainS)
 

@@ -5,9 +5,9 @@ import constants as const
 
 class PivotHandle(object):
     
-    def __init__(self, bone, pos, mainS): 
+    def __init__(self, bone, pos): 
         self.bone = bone
-        self.mainS = mainS
+        #self.mainS = mainS
         self.pos = pos
 
         self.getRect()
@@ -31,22 +31,21 @@ class PivotHandle(object):
         self.pos = newPos
         self.getRect()
 
-    def draw(self):
+    def draw(self, mainS):
         
-        pg.draw.circle(self.mainS, const.COL_RED, self.pos, const.RED_RAD)
+        pg.draw.circle(mainS, const.COL_RED, self.pos, const.RED_RAD)
 
         if const.DEBUG:
-            pg.draw.rect(self.mainS, const.COL_GREEN, self.rect, 2)
+            pg.draw.rect(mainS, const.COL_GREEN, self.rect, 2)
 
 
 
 class Translator:
     
-    def __init__(self, bone, pos, mainS):
+    def __init__(self, bone, pos):
         
         self.bone  = bone
         self.pos = pos
-        self.mainS = mainS
         self.getRect()
 
 
@@ -61,11 +60,11 @@ class Translator:
         self.pos = newPos
         self.getRect()
 
-    def draw(self):
+    def draw(self, mainS):
         
-        pg.draw.circle(self.mainS, const.COL_YELLOW, self.pos, const.YEL_RAD)
+        pg.draw.circle(mainS, const.COL_YELLOW, self.pos, const.YEL_RAD)
 
         if const.DEBUG:
-            pg.draw.rect(self.mainS, const.COL_GREEN, self.rect, 2)
+            pg.draw.rect(mainS, const.COL_GREEN, self.rect, 2)
 
         

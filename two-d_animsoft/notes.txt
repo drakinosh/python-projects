@@ -49,7 +49,7 @@ Entry 4
 
 -Succeded in adding "wunderkind" bones that can be connected to 
  the translator of a chief bone
--Added a mutext(select_mutex) that prevents the grabbing of more than one
+-Added a mutex(select_mutex) that prevents the grabbing of more than one
  point(handler or translator) at a time.
 
 -First and foremost, need to add way to create actual images out of the poses
@@ -85,6 +85,35 @@ Entry 06
  shows noticeable movement of the centre of the cicrcle - need to fix this, but it shouldn't be much
  of a problem as CircleBone objects are not currently allowed to be a ChiefBone
 -Still need to add .jpeg to .gif conversion 
+
+________
+Entry 07
+2016-10-10 MON
+15:54 GMT+0545
+
+-Still in Dhangadhi
+
+-Added onionskin; variable onion_frame is assigned a value on saving a frame
+ i.e. when frame_snap_mode is set to True
+
+-Need to find a way to save animations as pivotix-editable files with an ex-
+ tension such as .ptux(portmanteau of pivot + tux); cPickle cannot pickle 
+ Surface objects
+-Still need to find a way to create gifs from a group of jpegs
+
+________
+Entry 08
+2016-10-11 TUE
+
+-Still in Dhangadhi
+
+-Added basic mechanism for saving and loading frame_lists (essentially an ani-
+ mation) using cPickle; Had to change __init__ methods of all classes and 
+ remove the self.mainS attribute for successful pickling
+
+-Will add a way to edit frames and to select arbitrary frames and set cur_frame
+ to that value
+-Will add a way to remove and un-parent bones
 
 ________
 

@@ -22,3 +22,6 @@ F to snap a frame
 
 P to save the frames as jpeg images
 
+S to save the animation as a .ptux file
+L to load the animation as a .ptux file
+

@@ -3,7 +3,26 @@
 import pygame as pg
 import math
 import copy
+import cPickle as cp
 
+def loadFramelist(fname):
+    
+    #frame_list = []
+
+    with open(fname, 'r') as fi:
+        
+        frame_list = cp.load(fi)
+
+    return frame_list
+
+def saveFramelist(fname, framelist):
+    
+
+    with open(fname, 'w') as fi:
+        cp.dump(framelist, fi)
+
+    return 0
+        
 def ultraCopy(bone_list):
     
     new_list = [copy.copy(bone) for bone in bone_list]

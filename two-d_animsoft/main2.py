@@ -11,6 +11,7 @@ import os
 from PIL import Image, ImageSequence
 import copy
 import images2gif
+import cPickle as cp
 
 def framenumGen(val=1):
     
@@ -50,22 +51,23 @@ def main():
     pg.init()
     clock = pg.time.Clock()
     mainS = pg.display.set_mode(const.SCREEN_SIZE)
+
     pg.display.set_caption("Pivotix")
 
-    bone0 = boneC.Bone(const.DEF_BONE_POS, None, mainS)
+    bone0 = boneC.Bone(const.DEF_BONE_POS, None)
 
-    main_bone = boneC.ChiefBone(const.DEF_CBONE_POS,  mainS)
+    main_bone = boneC.ChiefBone(const.DEF_CBONE_POS)
 
     bone_list = []
     frame_list = []
 
     fgen = framenumGen()
 
-    cur_frame = frameC.Frame(mainS, fgen.next(),bone_list)
+    cur_frame = frameC.Frame(fgen.next(),bone_list)
 
     cur_frame.bone_list.append(bone0)
     cur_frame.bone_list.append(main_bone)
-
+    onion_frame = None
     cur_pos = pg.mouse.get_pos()
 
 
@@ -77,9 +79,12 @@ def main():
 
     frame_snap_mode = False # snapping frames
 
-    RATE = 12               # 12 fps
+    FPS = const.FPS
+    RATE = 16               # animation play framerate
     save_anim = False
     save_ind = -1
+
+    onion_skin = True
 
     while True:
         
@@ -98,18 +103,19 @@ def main():
                     parent_mode = not parent_mode
 
                 if event.key == pg.K_a:
-                    new_bone = boneC.Bone(const.DEF_BONE_POS, None, mainS)
+                    new_bone = boneC.Bone(const.DEF_BONE_POS, None)
                     cur_frame.bone_list.append(new_bone)
 
                 if event.key == pg.K_d:
                     
                     new_bone = boneC.CircleBone(const.DEF_BONE_POS, None,
-                                                const.DEF_CIRCLE_RAD, const.DEF_THICKN,
-                                                mainS)
+                                                const.DEF_CIRCLE_RAD, const.DEF_THICKN)
                     cur_frame.bone_list.append(new_bone)
                                                     
                 if event.key == pg.K_f:
                     #frame_snap_mode = not frame_snap_mode
+
+                    # handle onionskin
                     frame_snap_mode = True
 
                 if event.key == pg.K_e:
@@ -118,13 +124,29 @@ def main():
                 if event.key == pg.K_w:
                     cur_frame = utils.getPrevFrame(cur_frame, frame_list)
 
-                if event.key == pg.K_s:
-                    print("SANITY CHECK ", cur_frame.number)
 
                 if event.key == pg.K_p:
                     print("Saving animation...")
                     save_anim = True
 
+                if event.key == pg.K_t:
+                    print("Some select debug stats...")
+                    print("Frame snap mode {}".format(frame_snap_mode))
+                    print("Select mutex {}".format(select_mutex))
+
+                if event.key == pg.K_s:
+                    
+                    fname = raw_input("Provide filename: ")
+                    utils.saveFramelist(fname, frame_list)
+
+                if event.key == pg.K_l:
+                    
+                    fname = raw_input("Provide filename: ")
+                    frame_list = utils.loadFramelist(fname)
+                    cur_frame = frame_list[0]
+                    print("Successful load from file %s" % fname)
+
+        
 
             if event.type == pg.MOUSEBUTTONDOWN:
                 
@@ -180,6 +202,15 @@ def main():
 
         mainS.fill(const.COL_WHITE)
 
+
+
+        # At the lowest layer, draw onionskin
+        if onion_skin and not save_anim:
+
+            if onion_frame is not None:
+                for bone in onion_frame.bone_list:
+                    bone.draw(mainS, True)
+
         # Rotate the bones, if any are grabbed
         # Also, draw the bones
 
@@ -218,19 +249,18 @@ def main():
                 else:
                     bone.translating = False
 
-            bone.draw()
-
+            bone.draw(mainS)
 
         # Draw the bone handles on top of all others
         # only in editing mode, though
         if not save_anim:
             for bone in cur_frame.bone_list:
-                bone.handle.draw()
+                bone.handle.draw(mainS)
 
             # Draw the translator on top of everything else
             for bone in cur_frame.bone_list:
                 if bone.type == const.TYPE_CHIEF_BONE:
-                    bone.translator.draw()
+                    bone.translator.draw(mainS)
 
         # reset all parenting codes if parent_mode is toggle False
         if not parent_mode:
@@ -262,8 +292,19 @@ def main():
 
         pg.display.update()
 
+        # 'mode' may be a bit misleading
+        # the following conditional block instantaneously
+        # saves the current frame.
+        # in addition, it also assigns the current frame
+        # to onion_frame
+
         if frame_snap_mode:
-            
+
+            # We need to deselect all the bones to avoid continuity
+            # errors in the next frame or after playing the animation
+            # IMPORTANT: select_mutex should also be set to False
+
+            select_mutex = False
             for bone in cur_frame.bone_list:
                 bone.grabbed = False
 
@@ -272,7 +313,7 @@ def main():
             
             # add current frame to list
             frame_list.append(cur_frame)
-
+            onion_frame = cur_frame
             # create new frame from existing one
             # copy the list
             
@@ -280,7 +321,7 @@ def main():
             new_bone_list = utils.ultraCopy(cur_frame.bone_list)
 
 
-            new_f = frameC.Frame(mainS, fgen.next(), new_bone_list)
+            new_f = frameC.Frame(fgen.next(), new_bone_list)
 
             #pg.image.save(mainS, "frame.jpeg")
             
@@ -295,13 +336,15 @@ def main():
         # The whole exception-catching business is for loading
         # the fist frame.
 
-
+        # Also, during saving, the animation is played 
+        # by changing the FPS value
         if save_anim:
             
             if save_ind == -1:
-                
+        
                 name = raw_input("name>> ")
                 os.mkdir(name)
+                FPS = RATE
 
             try:
                 cur_frame = frame_list[save_ind]
@@ -316,6 +359,10 @@ def main():
             if save_ind - 1 == len(frame_list):
                 save_anim = False
                 save_ind = -1
+                FPS = const.FPS
+
+                cur_frame = frame_list[-1]
+
                 '''
                 print("Creating gif....")
 
@@ -329,7 +376,7 @@ def main():
                 images2gif.writeGif("anim.gif", frames, 0.5)
                 '''
 
-        clock.tick(const.FPS)
+        clock.tick(FPS)
 
 if __name__ == '__main__':
     main()
