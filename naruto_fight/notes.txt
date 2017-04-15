@@ -1,0 +1,14 @@
+                    NOTES
+               for a naruto fighting game
+
+ENTRY 01
+2017-04-15 C.E. | SAT
+16:16 GMT+0545
+KATHMANDU, NEPAL
+
+-I basically copied the movement from worldShifter
+-Sucessfully handled running and idle animations and states
+-need to add jump and kunai-throwing, for now
+
+________
+
