@@ -11,7 +11,8 @@ class Player(pg.sprite.Sprite):
         """
 
         pg.sprite.Sprite.__init__(self)
-
+        
+        self.pos = pos
         self.x, self.y = pos
         self.health = c.MAX_HEALTH
         self.chakra = c.MAX_CHAKRA
@@ -27,8 +28,13 @@ class Player(pg.sprite.Sprite):
         self.jumpl_sprites = ph.getJumplSprites(self.pid)
         self.fallr_sprites = ph.getFallrSprites(self.pid)
         self.falll_sprites = ph.getFalllSprites(self.pid)
+        self.punchr_sprites = ph.getPunchrSprites(self.pid)
+        self.punchl_sprites = ph.getPunchlSprites(self.pid)
 
-        self.image = self.idler_sprites[0]
+        # doesn't matter
+        #self.image = self.idler_sprites[0]
+        self.image = self.punchl_sprites[1] # biggest iamge
+
         self.rect = self.image.get_rect(topleft=pos)
 
         # Movement
@@ -43,11 +49,13 @@ class Player(pg.sprite.Sprite):
         self.attack = False
         self.walk = False
         self.fall = False
-
+        
+        
         # other attribs
         self.cooldown = ph.getCoolDown(self.pid)
         self.canThrow = True # Kunai
         self.canJustu = True # I hereby declare that justu is a ver
+        self.canHit = True  # physical attacks like punches
 
         self.walkPos = c.WALK_POS
         self.walkFact = c.WALK_FACT
@@ -56,11 +64,17 @@ class Player(pg.sprite.Sprite):
         self.idlePos = c.IDLE_POS
         self.idleFact = c.IDLE_FACT
 
+        self.punchPos = 0
+        self.punchFact = 12 # slow
+
         # other poses
         self.jumpPos = 0
         self.fallPos = 0
         self.airFact = 16
 
+        self.a_mutex = False # adjusting left punch
+        # remains true only white punching
+        self.fin = False   # just finished punching
 
     def animate(self, imageList, animPos, animFact):
         
@@ -71,6 +85,27 @@ class Player(pg.sprite.Sprite):
                 animPos = -self.animSpeed
         animPos += self.animSpeed
         return animPos
+
+    def hitAnimate(self, imageList, animPos, animFact):
+        
+        # if adjusting mutex is on, turn it off
+        if self.a_mutex:
+            self.a_mutex = not self.a_mutex
+
+        if animPos % animFact == 0:
+            try:
+                self.image = imageList[animPos/animFact]
+            except IndexError:
+                animPos = -self.animSpeed
+                self.attack = False     #stop after one loop
+
+                if self.direc == c.LEFT:
+                    self.fin = True
+
+        animPos += self.animSpeed
+        return animPos
+
+
 
     def jump(self):
         
@@ -103,6 +138,20 @@ class Player(pg.sprite.Sprite):
         # jumping
         if keys[pg.K_w]:
             self.jump()
+
+        # attack
+        if keys[pg.K_z]:
+            
+            if not self.fall and self.canHit:
+                self.attack = True
+                self.canHit = False
+
+                if self.direc == c.LEFT:
+                    self.a_mutex = True
+        else:   
+            self.canHit = True
+
+        # can hit again only after releasing
 
         if not (keys[pg.K_d] or keys[pg.K_a]):
             self.walk = False
@@ -149,6 +198,7 @@ class Player(pg.sprite.Sprite):
 
     def manage_states(self):
         
+        # attacking takes precedence over walking
 
         if not self.walk and not self.attack and not self.fall:
             self.idle = True
@@ -185,7 +235,7 @@ class Player(pg.sprite.Sprite):
                 self.walkPos = self.animate(self.walkl_sprites, self.walkPos,
                                     self.walkFact)
 
-        elif self.idle:
+        if self.idle:
             if self.direc == c.RIGHT:
                 self.idlePos = self.animate(self.idler_sprites, self.idlePos,
                                     self.idleFact)
@@ -193,10 +243,35 @@ class Player(pg.sprite.Sprite):
                 self.idlePos = self.animate(self.idlel_sprites, self.idlePos,
                                     self.idleFact)
 
+        # attack anim
+        # while attacking, shift image so that the positions align
+        # just once
+
+        #WARNING
+        if self.a_mutex: 
+            self.rect.move_ip(-c.LEFT_ADJUST, 0)
+        """ 
+        if self.fin: # just finished punching
+            self.rect.move_ip(c.LEFT_ADJUST, 0)
+            self.fin = False
+        """
+
+        if self.attack:
+            if self.direc == c.RIGHT:
+                self.punchPos = self.hitAnimate(self.punchr_sprites, self.punchPos, 
+                                    self.punchFact)
+            else:
+                self.punchPos = self.hitAnimate(self.punchl_sprites, self.punchPos,
+                                    self.punchFact)
 
 
-    def update(self, obstacles, keys):
+    def update(self, obstacles, keys, screen):
         
+
+        # idea 
+        # change rect to suit image
+
+    
         self.get_position(obstacles)
         self.manage_states()
         self.check_keys(keys)
@@ -208,6 +283,24 @@ class Player(pg.sprite.Sprite):
 
         self.x += self.x_vel
 
+        print("MEIN x {}".format(self.rect.x))
+
+        self.draw(screen)
+
+        # move after drawing last punching image
+        if self.fin:
+            self.rect.move_ip((c.LEFT_ADJUST, 0))
+            self.fin = False
+
+            #WARNING
+            self.image = self.idlel_sprites[0]
+        
+
+        if c.DEBUG_MODE:
+            # draw rect
+            pg.draw.rect(screen, c.GREEN, self.rect, 2)
+
+        
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)

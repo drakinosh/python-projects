@@ -36,8 +36,7 @@ def main():
 
         keys = pg.key.get_pressed()
         mainS.fill(c.BLUE)
-        sasuke.update(obsGroup, keys)
-        sasuke.draw(mainS)
+        sasuke.update(obsGroup, keys, mainS)
 
         pg.display.update()
         clock.tick(60)

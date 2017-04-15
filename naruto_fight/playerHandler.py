@@ -83,6 +83,14 @@ def getFallrSprites(pid):
 
     return getRightSprites(suffix, roof, pid)
 
+def getPunchrSprites(pid):
+    suffix = "_rpunch"
+    roof = 4
+
+    return getRightSprites(suffix, roof, pid)
+
+
+
 def getIdlelSprites(pid):
     
     return getLeftSprites(getIdlerSprites(pid))
@@ -97,3 +105,7 @@ def getJumplSprites(pid):
 def getFalllSprites(pid):
     
     return getLeftSprites(getFallrSprites(pid))
+
+def getPunchlSprites(pid):
+    
+    return getLeftSprites(getPunchrSprites(pid))

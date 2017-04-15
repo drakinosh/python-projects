@@ -8,7 +8,20 @@ KATHMANDU, NEPAL
 
 -I basically copied the movement from worldShifter
 -Sucessfully handled running and idle animations and states
--need to add jump and kunai-throwing, for now
+-Need to add jump and kunai-throwing, for now
 
 ________
+Entry 02
+2017-04-15 C.E. | SAT
+23:35 GMT+0545
+KATHMANDU, NEPAL
 
+-Successfully added jumping, falling, and punching
+-handled error with left-punching using a hackish(blasphemy!) solution
+ that involves moving the rectangle during the punch. Variables called
+ self.a_mutex and self.fin were used to obtain the required behaviour.
+ Have left #WARNING tokens in places. Need to remember to check them
+ later
+ -Need to add kunai-throwing and jutsus (including shunshin)
+
+ ________

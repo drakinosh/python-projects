@@ -1,6 +1,9 @@
 SCREEN_W = 640
 SCREEN_H = 480
 
+# control consts
+DEBUG_MODE = False
+
 #Colours
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -24,3 +27,5 @@ RIGHT= "right"
 
 #Paths
 SPRITES_FOLDER = "player_sprites"
+
+LEFT_ADJUST = 13
