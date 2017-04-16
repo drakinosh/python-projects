@@ -29,6 +29,9 @@ def main():
         block = blocks.Block((i, c.SCREEN_H-50))
         obsGroup.add(block)
 
+    if c.DEBUG_MODE:
+        print("Debug mode")
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:

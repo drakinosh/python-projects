@@ -1,6 +1,7 @@
 import pygame as pg
 import const as c
 import playerHandler as ph
+import weapons as w
 
 class Player(pg.sprite.Sprite):
     
@@ -16,6 +17,7 @@ class Player(pg.sprite.Sprite):
         self.x, self.y = pos
         self.health = c.MAX_HEALTH
         self.chakra = c.MAX_CHAKRA
+        self.kunai = c.MAX_KUNAICOUNT
         self.pid = pid
         self.direc = direc
 
@@ -30,12 +32,20 @@ class Player(pg.sprite.Sprite):
         self.falll_sprites = ph.getFalllSprites(self.pid)
         self.punchr_sprites = ph.getPunchrSprites(self.pid)
         self.punchl_sprites = ph.getPunchlSprites(self.pid)
+        self.throwr_sprites = ph.getThrowrSprites(self.pid)
+        self.throwl_sprites = ph.getThrowlSprites(self.pid)
 
         # doesn't matter
         #self.image = self.idler_sprites[0]
         self.image = self.punchl_sprites[1] # biggest iamge
 
         self.rect = self.image.get_rect(topleft=pos)
+
+        # weapons thrown list
+        # The player is responsible for updating(drawing)
+        # the weapons he uses
+
+        self.weapons_list = []
 
         # Movement
         self.speed = ph.getSpeed(self.pid)
@@ -49,8 +59,9 @@ class Player(pg.sprite.Sprite):
         self.attack = False
         self.walk = False
         self.fall = False
-        
-        
+        self.throw = False
+
+    
         # other attribs
         self.cooldown = ph.getCoolDown(self.pid)
         self.canThrow = True # Kunai
@@ -71,10 +82,14 @@ class Player(pg.sprite.Sprite):
         self.jumpPos = 0
         self.fallPos = 0
         self.airFact = 16
+        self.throwPos = 0
+        self.throwFact = 12
 
         self.a_mutex = False # adjusting left punch
+        self.t_mutex = False
         # remains true only white punching
         self.fin = False   # just finished punching
+        self.t_fin = False
 
     def animate(self, imageList, animPos, animFact):
         
@@ -85,6 +100,25 @@ class Player(pg.sprite.Sprite):
                 animPos = -self.animSpeed
         animPos += self.animSpeed
         return animPos
+
+    def throwAnimate(self, imageList, animPos, animFact):
+        
+        # First, adjust for the left direc
+        if self.t_mutex:
+            self.t_mutex = False # adjust only once
+        if animPos % animFact == 0:
+            try:
+                self.image = imageList[animPos/animFact]
+            except IndexError:
+                animPos = -self.animSpeed
+                self.throw = False
+
+                if self.direc == c.LEFT:
+                    self.t_fin = True
+
+        animPos += self.animSpeed
+        return animPos
+
 
     def hitAnimate(self, imageList, animPos, animFact):
         
@@ -113,6 +147,14 @@ class Player(pg.sprite.Sprite):
             self.y_vel = -self.jump_power
             self.fall = True
 
+    def getThrowPos(self):
+        """Position of placement of thrown weapons"""
+
+        if self.direc == c.RIGHT:
+            return self.rect.midright
+        return self.rect.midleft
+
+
     def check_keys(self, keys):
         
         self.x_vel = 0
@@ -140,18 +182,41 @@ class Player(pg.sprite.Sprite):
             self.jump()
 
         # attack
+        #WARNING
+        #only hit if idle to avoid conflicts with throw
+        # and vice-versa
         if keys[pg.K_z]:
             
-            if not self.fall and self.canHit:
+            if not self.fall and self.canHit and self.idle:
                 self.attack = True
                 self.canHit = False
 
                 if self.direc == c.LEFT:
                     self.a_mutex = True
         else:   
-            self.canHit = True
+            # release if not in the middle of an attacl
+            if not self.attack:
+                self.canHit = True
 
         # can hit again only after releasing
+
+        # kunai action
+        if keys[pg.K_c]:
+            if not self.fall and self.canThrow and self.idle:
+
+                # Distract!
+                self.throw = True
+                self.canThrow = False
+                kunai = w.Kunai(self.getThrowPos(),  self.direc)
+                self.weapons_list.append(kunai)
+
+                if self.direc == c.LEFT:
+                    self.t_mutex = True
+
+
+        else:
+            if not self.throw:
+                self.canThrow = True
 
         if not (keys[pg.K_d] or keys[pg.K_a]):
             self.walk = False
@@ -199,11 +264,11 @@ class Player(pg.sprite.Sprite):
     def manage_states(self):
         
         # attacking takes precedence over walking
-
-        if not self.walk and not self.attack and not self.fall:
+        if not self.walk and not self.fall and not self.attack and not self.throw:
             self.idle = True
         else:
             self.idle = False
+        # ~A ^ ~B <=> ~(A V B)
 
         # if in the air and moving horizontally, disable running
         # animation
@@ -250,6 +315,9 @@ class Player(pg.sprite.Sprite):
         #WARNING
         if self.a_mutex: 
             self.rect.move_ip(-c.LEFT_ADJUST, 0)
+
+        if self.t_mutex:
+            self.rect.move_ip(-c.T_LEFT_ADJUST, 0)
         """ 
         if self.fin: # just finished punching
             self.rect.move_ip(c.LEFT_ADJUST, 0)
@@ -263,6 +331,14 @@ class Player(pg.sprite.Sprite):
             else:
                 self.punchPos = self.hitAnimate(self.punchl_sprites, self.punchPos,
                                     self.punchFact)
+
+        if self.throw:
+            if self.direc == c.RIGHT:
+                self.throwPos = self.throwAnimate(self.throwr_sprites, self.throwPos,
+                                    self.throwFact)
+            else:
+                self.throwPos = self.throwAnimate(self.throwl_sprites, self.throwPos,
+                                    self.throwFact)
 
 
     def update(self, obstacles, keys, screen):
@@ -283,7 +359,8 @@ class Player(pg.sprite.Sprite):
 
         self.x += self.x_vel
 
-        print("MEIN x {}".format(self.rect.x))
+        for each in self.weapons_list:
+            each.update(screen)
 
         self.draw(screen)
 
@@ -291,8 +368,12 @@ class Player(pg.sprite.Sprite):
         if self.fin:
             self.rect.move_ip((c.LEFT_ADJUST, 0))
             self.fin = False
-
             #WARNING
+            self.image = self.idlel_sprites[0]
+
+        if self.t_fin:
+            self.rect.move_ip((c.T_LEFT_ADJUST, 0))
+            self.t_fin = False
             self.image = self.idlel_sprites[0]
         
 

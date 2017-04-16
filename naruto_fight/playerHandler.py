@@ -89,7 +89,11 @@ def getPunchrSprites(pid):
 
     return getRightSprites(suffix, roof, pid)
 
+def getThrowrSprites(pid):
+    suffix = "_rthrow"
+    roof = 4
 
+    return getRightSprites(suffix, roof, pid)
 
 def getIdlelSprites(pid):
     
@@ -109,3 +113,7 @@ def getFalllSprites(pid):
 def getPunchlSprites(pid):
     
     return getLeftSprites(getPunchrSprites(pid))
+
+def getThrowlSprites(pid):
+    
+    return getLeftSprites(getThrowrSprites(pid))
