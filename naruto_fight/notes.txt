@@ -36,5 +36,16 @@ KATHMANDU, NEPAL
  -Need to add an enemy to punch and kick
  -Need to add jutsus(shunshin later)
 
- ________
+________
+ENTRY 04
+2017-04-18 C.E. | TUE
+09:43 GMT+05:45
+KATHMANDU, NEPAL
 
+-Added guarding
+-Can see no easy way to add jutsus(it's those sprites)
+-Maybe I'll drop this
+-On second thought, no
+-Arrrggghhhhh
+
+________

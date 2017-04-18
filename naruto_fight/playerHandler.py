@@ -15,8 +15,8 @@ class PlayerData:
         self.cooldown = cooldown
 
 
-sasuke_data = PlayerData("sasuke", 10, 5, 3)
-naruto_data = PlayerData("naruto", 12, 4, 2)
+sasuke_data = PlayerData("sasuke", 9, 5, 3)
+naruto_data = PlayerData("naruto", 10, 4, 2)
 
 pid_dicts = {3 : sasuke_data,
              1 : naruto_data
@@ -50,7 +50,6 @@ def getRightSprites(suffix, roof, pid):
     return images_list
 
 def getLeftSprites(imager_list):
-    
     imagel_list = list()
 
     for img in imager_list:
@@ -95,6 +94,14 @@ def getThrowrSprites(pid):
 
     return getRightSprites(suffix, roof, pid)
 
+def getGuardrSprites(pid):
+    
+    suffix = "_rguard"
+    roof = 2
+
+    return getRightSprites(suffix, roof, pid)
+
+
 def getIdlelSprites(pid):
     
     return getLeftSprites(getIdlerSprites(pid))
@@ -117,3 +124,7 @@ def getPunchlSprites(pid):
 def getThrowlSprites(pid):
     
     return getLeftSprites(getThrowrSprites(pid))
+
+def getGuardlSprites(pid):
+    
+    return getLeftSprites(getGuardrSprites(pid))

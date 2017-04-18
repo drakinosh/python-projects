@@ -2,6 +2,7 @@ import pygame as pg
 import const as c
 import playerHandler as ph
 import weapons as w
+import time
 
 class Player(pg.sprite.Sprite):
     
@@ -21,6 +22,7 @@ class Player(pg.sprite.Sprite):
         self.pid = pid
         self.direc = direc
 
+
         # get sprites list
         self.idlel_sprites = ph.getIdlelSprites(self.pid)
         self.idler_sprites = ph.getIdlerSprites(self.pid)
@@ -34,6 +36,8 @@ class Player(pg.sprite.Sprite):
         self.punchl_sprites = ph.getPunchlSprites(self.pid)
         self.throwr_sprites = ph.getThrowrSprites(self.pid)
         self.throwl_sprites = ph.getThrowlSprites(self.pid)
+        self.guardr_sprites = ph.getGuardrSprites(self.pid)
+        self.guardl_sprites = ph.getGuardlSprites(self.pid)
 
         # doesn't matter
         #self.image = self.idler_sprites[0]
@@ -57,6 +61,7 @@ class Player(pg.sprite.Sprite):
         # state attribs
         self.idle = True
         self.attack = False
+        self.guard = False
         self.walk = False
         self.fall = False
         self.throw = False
@@ -65,8 +70,9 @@ class Player(pg.sprite.Sprite):
         # other attribs
         self.cooldown = ph.getCoolDown(self.pid)
         self.canThrow = True # Kunai
-        self.canJustu = True # I hereby declare that justu is a ver
+        self.canJustu = True # I hereby declare that _justu_ is a verb
         self.canHit = True  # physical attacks like punches
+        self.canWalk = True
 
         self.walkPos = c.WALK_POS
         self.walkFact = c.WALK_FACT
@@ -90,6 +96,10 @@ class Player(pg.sprite.Sprite):
         # remains true only white punching
         self.fin = False   # just finished punching
         self.t_fin = False
+
+        # time vars for chaining moves together
+        self.t1 = None
+        self.t2 = None
 
     def animate(self, imageList, animPos, animFact):
         
@@ -154,6 +164,22 @@ class Player(pg.sprite.Sprite):
             return self.rect.midright
         return self.rect.midleft
 
+    def handleCombos(self):
+        
+        # if uninitialised, initialise
+        if self.t1 is None:
+            self.t1 = time.time()
+            self.combo_start = False
+            return
+
+        # else
+        self.t2 = time.time()
+
+        if (self.t2 - self.t1) < c.COMBO_TIME:
+            self.combo_start = True
+
+        self.t1 = None
+        self.t2 = None
 
     def check_keys(self, keys):
         
@@ -164,7 +190,7 @@ class Player(pg.sprite.Sprite):
 
         if keys[pg.K_d]:
             
-            if not self.fall:
+            if self.canWalk:
                 self.walk = True
 
             self.direc = c.RIGHT
@@ -172,7 +198,7 @@ class Player(pg.sprite.Sprite):
         
         elif keys[pg.K_a]:
             
-            if not self.fall:
+            if self.canWalk:
                 self.walk = True
             self.direc = c.LEFT
             self.x_vel -= self.speed
@@ -190,6 +216,8 @@ class Player(pg.sprite.Sprite):
             if not self.fall and self.canHit and self.idle:
                 self.attack = True
                 self.canHit = False
+
+                self.handleCombos()
 
                 if self.direc == c.LEFT:
                     self.a_mutex = True
@@ -218,6 +246,14 @@ class Player(pg.sprite.Sprite):
             if not self.throw:
                 self.canThrow = True
 
+        # guarding
+        if keys[pg.K_x]:
+            if self.idle:
+                self.guard = True
+        else:
+            self.guard = False
+
+       
         if not (keys[pg.K_d] or keys[pg.K_a]):
             self.walk = False
 
@@ -264,11 +300,18 @@ class Player(pg.sprite.Sprite):
     def manage_states(self):
         
         # attacking takes precedence over walking
-        if not self.walk and not self.fall and not self.attack and not self.throw:
+        if not self.walk and not self.fall and not self.attack and not self.throw and not self.guard:
             self.idle = True
         else:
             self.idle = False
         # ~A ^ ~B <=> ~(A V B)
+
+
+        # canWalk
+        if self.idle:
+            self.canWalk = True
+        else:
+            self.canWalk = False
 
         # if in the air and moving horizontally, disable running
         # animation
@@ -339,6 +382,14 @@ class Player(pg.sprite.Sprite):
             else:
                 self.throwPos = self.throwAnimate(self.throwl_sprites, self.throwPos,
                                     self.throwFact)
+
+
+        # guarding
+        if self.guard:
+            if self.direc == c.RIGHT:
+                self.image = self.guardr_sprites[0]
+            else:
+                self.image = self.guardl_sprites[0]
 
 
     def update(self, obstacles, keys, screen):
