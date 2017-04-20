@@ -92,7 +92,20 @@ class mainGUI:
             #particular manga title and aslo a folder for chapter 1
             print "Ore ha koko ni iru"
             x  = namelist[self.val]
+
+            # Compatibility for files
+            # replace apostrophes
+            x.replace("'", r"\'")
+
+            # folcreate creates folders
+            # callind order :
+            # clickable_wind - chapVal - chapDL - folcreate
+
+            # note: this turned out to be unnecessary
+            # check apos below
+
             remove_set.add(x+'.html')
+
             if not os.path.isfile(x + '.html'):
                 urllibX.urlretrieve('http://www.mangareader.net'\
                                     +mangaLinkMap[x], x+'.html')
@@ -112,7 +125,7 @@ def chapDL(index, listChap, mangaName):
     urlH = chapDict[listChap[index]]
     print "url ha ", urlH
     print "Manganame ha ", mangaName
-    apos = "\'"
+    apos = "\""
     apos+mangaName+apos+" "+ apos+listChap[index]+apos
     os.system("./folcreate.sh "+ apos+mangaName+apos+" "+apos+listChap[index]+apos)
 

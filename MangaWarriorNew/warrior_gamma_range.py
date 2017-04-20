@@ -113,7 +113,7 @@ def chapDL(index, listChap, mangaName):
     urlH = chapDict[listChap[index]]
     print "url ha ", urlH
     print "Manganame ha ", mangaName
-    apos = "\'"
+    apos = "\""
     apos+mangaName+apos+" "+ apos+listChap[index]+apos
     os.system("./folcreate.sh "+ apos+mangaName+apos+" "+apos+listChap[index]+apos)
 
