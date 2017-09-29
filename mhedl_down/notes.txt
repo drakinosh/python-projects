@@ -1,0 +1,10 @@
+sep 29 2017
+11:38
+
+not authorised to access the images directly
+
+sam day
+11:44
+
+apparently that was just caused by the '&amp;'
+fixed
