@@ -2,7 +2,7 @@
 
 '''
 Sample usage:
-python sc.py for_my_daughter_i_might_even_be_able_to_defeat_the_demon_king uchiMusume
+python sc.py renai_boukun Renai_Boukun_Manga
 '''
 import requests, sys, os
 import bs4
@@ -136,7 +136,7 @@ def main():
     print('Total number of chapters: {}'.format(len(chap_li)))
 
     dl_start = int(input(">>Enter DL start list index: "))
-    dl_stop = int(input(">>Enter DL stop list indexX: "))
+    dl_stop = int(input(">>Enter DL stop list index: "))
 
     downloadChapters(chap_li, dl_start, dl_stop)
 
