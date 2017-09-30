@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
-'''
-Sample usage:
-python sc.py renai_boukun Renai_Boukun_Manga
-'''
 import requests, sys, os
 import bs4
-import ssl
-import subprocess
+import re
 
-manga_name = sys.argv[1] # the part after mp_url_base
+chap_pat = re.compile("/c\S*/")
+
+manga_name = sys.argv[1]
 manga_foldername = sys.argv[2]
 
 mp_url_base = "https://www.mangahere.co/manga/"
@@ -18,6 +15,14 @@ mp_url = mp_url_base + manga_name
 mp_fname = manga_name + ".html"
 
 DEBUG = True
+
+def extractChapterCode(chap_string):
+    
+    x = chap_pat.search(chap_string)
+    st = x.group() # form /c[num]/
+
+    return st[1:-1] #return c[num]
+
 def downloadSingleChapter(c_link):
     
     # phase one : make dir
@@ -25,7 +30,8 @@ def downloadSingleChapter(c_link):
     i = c_link.index(manga_name)
     # get the c[num] part, excluding the bounding /'s
     #foldername = c_link[i + len(manga_name) + 1:-1]
-    foldername = c_link[-5:-1]
+    #foldername = c_link[-5:-1]
+    foldername = extractChapterCode(c_link)
     
     full_p = os.path.join(manga_foldername, foldername)
 
@@ -99,6 +105,15 @@ def downloadChapters(chap_li, suru, khatam):
         print("Downloading chapter {}".format(ind))
         downloadSingleChapter(chapter_link)
 
+def sortChapKey(chap):
+    """
+    Given a string for a chapter URL, it returns the numeric value of
+    the chapter num c***
+    """
+    #NOTE: Maybe add regexp to handle manga with >1000 chaps
+    ccode = extractChapterCode(chap)
+    return float(ccode[1:])
+
 def main():
     
     # make dir
@@ -127,7 +142,8 @@ def main():
             if 'comments' not in a['href'] and 'm.mangahere' not in a['href']:
                 chap_li.append(a['href'])
 
-    chap_li.reverse()
+    #chap_li.reverse()
+    chap_li.sort(key=sortChapKey) # Sorts by chapter number
 
     print('Chapter list: ')
     for each in chap_li:
@@ -136,7 +152,7 @@ def main():
     print('Total number of chapters: {}'.format(len(chap_li)))
 
     dl_start = int(input(">>Enter DL start list index: "))
-    dl_stop = int(input(">>Enter DL stop list index: "))
+    dl_stop = int(input(">>Enter DL stop list indexX: "))
 
     downloadChapters(chap_li, dl_start, dl_stop)
 
