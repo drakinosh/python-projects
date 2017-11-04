@@ -3,8 +3,13 @@ sep 29 2017
 
 not authorised to access the images directly
 
-sam day
+same day
 11:44
 
 apparently that was just caused by the '&amp;'
 fixed
+
+nov 04 2017
+10:20
+
+fixed problem with regexp

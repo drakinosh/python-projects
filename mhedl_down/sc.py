@@ -4,7 +4,8 @@ import requests, sys, os
 import bs4
 import re
 
-chap_pat = re.compile("/c\S*/")
+#chap_pat = re.compile("/c\S*/")
+chap_pat = re.compile("/c\d*/")
 
 manga_name = sys.argv[1]
 manga_foldername = sys.argv[2]
@@ -20,8 +21,8 @@ def extractChapterCode(chap_string):
     
     x = chap_pat.search(chap_string)
     st = x.group() # form /c[num]/
-
     return st[1:-1] #return c[num]
+
 
 def downloadSingleChapter(c_link):
     
