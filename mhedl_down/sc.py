@@ -4,8 +4,10 @@ import requests, sys, os
 import bs4
 import re
 
+ERR_STRING = "CHAPTER_ERROR"
 #chap_pat = re.compile("/c\S*/")
-chap_pat = re.compile("/c\d*/")
+# pattern: /c, followed by digits or periods or digits
+chap_pat = re.compile("/c\d*.*\d*/")
 
 manga_name = sys.argv[1]
 manga_foldername = sys.argv[2]
@@ -15,13 +17,18 @@ mp_url_base = "https://www.mangahere.co/manga/"
 mp_url = mp_url_base + manga_name
 mp_fname = manga_name + ".html"
 
-DEBUG = True
+DEBUG = True 
 
 def extractChapterCode(chap_string):
-    
-    x = chap_pat.search(chap_string)
-    st = x.group() # form /c[num]/
-    return st[1:-1] #return c[num]
+    if DEBUG:
+        print("Given str: ", chap_string)
+
+    try:
+        x = chap_pat.search(chap_string) 
+        st = x.group() # form /c[num]/
+        return st[1:-1] #return c[num]
+    except:
+        return ERR_STRING
 
 
 def downloadSingleChapter(c_link):
@@ -33,7 +40,10 @@ def downloadSingleChapter(c_link):
     #foldername = c_link[i + len(manga_name) + 1:-1]
     #foldername = c_link[-5:-1]
     foldername = extractChapterCode(c_link)
-    
+
+    if (foldername == ERR_STRING):
+        return
+
     full_p = os.path.join(manga_foldername, foldername)
 
     try:
@@ -47,7 +57,8 @@ def downloadSingleChapter(c_link):
 
     while True:
         
-        p_link = "https:" + c_link + str(pnum) + ".html"
+        #p_link = "https:" + c_link + str(pnum) + ".html"
+        p_link = c_link + str(pnum) + ".html"
         r = requests.get(p_link, verify=False)
         
         if DEBUG:
@@ -113,7 +124,11 @@ def sortChapKey(chap):
     """
     #NOTE: Maybe add regexp to handle manga with >1000 chaps
     ccode = extractChapterCode(chap)
-    return float(ccode[1:])
+
+    if ccode is not ERR_STRING:
+        return float(ccode[1:])
+    else:
+        return 99999
 
 def main():
     
@@ -124,7 +139,8 @@ def main():
         pass
 
     # Download main page
-    r = requests.get(mp_url, verify=False)
+    print("MP-URL: ", mp_url)
+    r = requests.get(mp_url, verify=False, headers={'Accept-Encoding':'deflate'})
     assert r.status_code == 200
 
     with open(mp_fname, 'wb') as f:
@@ -132,7 +148,7 @@ def main():
 
     # Read page and create bs4 object
     f = open(mp_fname, 'r')
-    soup = bs4.BeautifulSoup(f.read())
+    soup = bs4.BeautifulSoup(f.read(), "html.parser")
     f.close()
 
     # obtain list of chapter urls
@@ -141,14 +157,21 @@ def main():
         if a.has_attr('href') and manga_name in a['href']:
             # filter out comments and main page
             if 'comments' not in a['href'] and 'm.mangahere' not in a['href']:
-                chap_li.append(a['href'])
+
+                li = a['href']
+                #chap_li.append(a['href'])
+                #add schema if needed
+                if 'http' not in li:
+                    li = 'https:' + a['href']
+
+                chap_li.append(li)
 
     #chap_li.reverse()
     chap_li.sort(key=sortChapKey) # Sorts by chapter number
 
     print('Chapter list: ')
-    for each in chap_li:
-        print (each)
+    for idx, each in enumerate(chap_li):
+        print("#{}: {}".format(idx, each))
 
     print('Total number of chapters: {}'.format(len(chap_li)))
 

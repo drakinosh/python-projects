@@ -9,7 +9,6 @@ same day
 apparently that was just caused by the '&amp;'
 fixed
 
-nov 04 2017
-10:20
+dec 07 2017
 
-fixed problem with regexp
+fixed some issues with extra chapters and volume numbers
