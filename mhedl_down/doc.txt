@@ -1,0 +1,11 @@
+The gist of it is that mangahere stores images in <img> tags, which have the attr. onload="loadImg(this)".
+Exploiting this, we can parse the html file for this pattern and get the direct link.
+
+The program takes the manga's name, as it appears in the mangahere.co link e.g. for mangahere.co/manga/et_cetera, you
+send et_cetera as the name.
+
+Then, it downloads the html file and gets all teh chapter links.
+It checks the format - /vxx/cxx.xx or /cxx.xx and creates folders accordingly
+It downloads images using the request library.
+
+Certificate verification has been disabled

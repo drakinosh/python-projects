@@ -12,3 +12,8 @@ fixed
 dec 07 2017
 
 fixed some issues with extra chapters and volume numbers
+
+dec 11 15:17
+added sort by volume, and inclusion of volume numbers in foldernames
+there seems to be a sort of timeout now - can't download a lot of different titles
+  at once(decoding error);
