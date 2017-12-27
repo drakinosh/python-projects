@@ -17,3 +17,9 @@ dec 11 15:17
 added sort by volume, and inclusion of volume numbers in foldernames
 there seems to be a sort of timeout now - can't download a lot of different titles
   at once(decoding error);
+
+
+dec 27 20:46
+seems the actual location of the image needs a username and a password
+(401 unauthorised).
+this doesn't work anymore.
