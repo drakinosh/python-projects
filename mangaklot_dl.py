@@ -11,6 +11,8 @@ import os
 # the manganame is the name appearing in the url(e.g. boku_wa_ne)
 # sample usaeg: ./mangaklot_dl.py 
 
+DEBUG = False
+
 def main():
     base_url = "mangakakalot.com/manga/"
     mname = sys.argv[1]
@@ -53,11 +55,13 @@ def main():
 def downloadChapter(chapter_tag):
 
     chapter_name = chapter_tag.get_text()
+    chapter_name = chapter_name.replace("/", "*SL*")
 
     try:
         os.mkdir(chapter_name)
     except:
         pass
+
 
     os.chdir(chapter_name)
 
@@ -66,14 +70,15 @@ def downloadChapter(chapter_tag):
     with open("file.html", "r") as f:
         page = f.read()
 
-    soup = bs4.BeautifulSoup(page)
+    soup = bs4.BeautifulSoup(page, "html.parser")
 
     tags = soup.findAll('img')
 
     i = 0
     for tag in tags:
-        print tag['src']
-        if 'blogspot' in tag['src']:
+        if DEBUG:
+            print (tag['src'])
+        if 'blogspot' in tag['src'] or 'mpcdn' in tag['src']:
             subprocess.call(["wget", "-O", str(i) + ".jpg", tag['src']])
             i += 1
 
