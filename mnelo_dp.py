@@ -1,20 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import bs4, sys
 import subprocess
 import os
 
-# Downloads from mangakakalot.com
+# Downloads from manganelo.com
 # use sparingly
 # Dependencies: beautifulsoup4
 # usage: ./script [manganame] [foldername]
 # the manganame is the name appearing in the url(e.g. boku_wa_ne)
 # sample usaeg: ./mangaklot_dl.py 
 
-DEBUG = False
+DEBUG = True
 
 def main():
-    base_url = "mangakakalot.com/manga/"
+    base_url = "manganelo.com/manga/"
     mname = sys.argv[1]
     foldername = sys.argv[2]
 
@@ -28,8 +28,11 @@ def main():
 
     #Download main page
     subprocess.call(['wget', '-O', mname + ".html", base_url + mname])
-    with open(mname + ".html", "r") as f:
+    with open(mname + ".html", "rb") as f:
         dat = f.read()
+
+    dat = dat.decode("utf-8")
+
 
     soup = bs4.BeautifulSoup(dat, "html.parser")
     chap_li = list()
@@ -79,7 +82,7 @@ def downloadChapter(chapter_tag):
     for tag in tags:
         if DEBUG:
             print (tag['src'])
-        if 'blogspot' in tag['src'] or 'mpcdn' in tag['src']:
+        if 'blogspot' in tag['src'] or 'mpcdn' in tag['src'] or 'mgimgcdn' in tag['src']:
             subprocess.call(["wget", "-O", str(i) + ".jpg", tag['src']])
             i += 1
 
