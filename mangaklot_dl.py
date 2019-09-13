@@ -4,18 +4,21 @@ import bs4, sys
 import subprocess
 import os
 
-# Downloads from mangakakalot.com
-# use sparingly
+# Downloads from mangakakalot.com | sanskarchand
+# use sparingly; conserver bandwidth 
+# this is a throw-away script
 # Dependencies: beautifulsoup4
 # usage: ./script [manganame] [foldername]
 # the manganame is the name appearing in the url(e.g. boku_wa_ne)
 # sample usaeg: ./mangaklot_dl.py 
 
 DEBUG = False
+phrases =  ['blogspot', 'mpcdn', 'mkklcdn']
+
+mname = sys.argv[1]
 
 def main():
     base_url = "mangakakalot.com/manga/"
-    mname = sys.argv[1]
     foldername = sys.argv[2]
 
     try:
@@ -57,6 +60,7 @@ def downloadChapter(chapter_tag):
 
     chapter_name = chapter_tag.get_text()
     chapter_name = chapter_name.replace("/", "*SL*")
+    chapter_name = chapter_name.replace(":", "_colon_")
 
     try:
         os.mkdir(chapter_name)
@@ -79,9 +83,12 @@ def downloadChapter(chapter_tag):
     for tag in tags:
         if DEBUG:
             print (tag['src'])
-        if 'blogspot' in tag['src'] or 'mpcdn' in tag['src']:
-            subprocess.call(["wget", "-O", str(i) + ".jpg", tag['src']])
-            i += 1
+
+        #IDENTIY a link pointing to a manga image
+        if any([x in tag['src'] for x in phrases]):
+            if mname in tag['src']:
+                subprocess.call(["wget", "-O", str(i) + ".jpg", tag['src']])
+                i += 1
 
     os.chdir("..")
 

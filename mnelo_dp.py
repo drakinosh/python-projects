@@ -13,6 +13,8 @@ import os
 
 DEBUG = True
 
+phrases = ['blogspot', 'mpcdn', 'mgimgcdn', 'mkklcdn', 'mkklcdnv3']
+
 def main():
     base_url = "manganelo.com/manga/"
     mname = sys.argv[1]
@@ -60,6 +62,7 @@ def downloadChapter(chapter_tag):
 
     chapter_name = chapter_tag.get_text()
     chapter_name = chapter_name.replace("/", "*SL*")
+    chapter_name = chapter_name.replace(':', '_col_')
 
     try:
         os.mkdir(chapter_name)
@@ -82,7 +85,8 @@ def downloadChapter(chapter_tag):
     for tag in tags:
         if DEBUG:
             print (tag['src'])
-        if 'blogspot' in tag['src'] or 'mpcdn' in tag['src'] or 'mgimgcdn' in tag['src']:
+        #if 'blogspot' in tag['src'] or 'mpcdn' in tag['src'] or 'mgimgcdn' in tag['src'] or 'mkklcdn' in tag['src'] or 'mkklcdnv3' in tag['src']:
+        if any([x in tag['src'] for x in phrases]):
             subprocess.call(["wget", "-O", str(i) + ".jpg", tag['src']])
             i += 1
 
